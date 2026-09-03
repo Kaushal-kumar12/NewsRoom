@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { BarChart3, Eye, Heart, MessageSquare, FileText } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
-import { getAuthorStories } from "../../services/news/newsService";
+import { getAuthorStories } from "../../services/news/newsServices";
 
 export default function AuthorAnalyticsPage() {
   const { firebaseUser } = useAuth();
