@@ -1,0 +1,131 @@
+.profile-change-request-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-left: 4px solid #f59e0b;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.profile-change-request-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.profile-request-title {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.profile-request-title strong {
+  font-size: 16px;
+}
+
+.profile-change-request-header p {
+  color: #6b7280;
+  margin: 8px 0 0;
+}
+
+.profile-request-status {
+  padding: 6px 10px;
+  border-radius: 20px;
+  background: #fef3c7;
+  color: #92400e;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.profile-request-details {
+  margin-top: 20px;
+  display: grid;
+  gap: 14px;
+}
+
+.profile-request-change {
+  padding: 14px;
+  background: #f9fafb;
+  border-radius: 8px;
+}
+
+.profile-request-change > span {
+  display: block;
+  font-size: 12px;
+  color: #6b7280;
+  margin-bottom: 8px;
+}
+
+.profile-request-change div {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.profile-request-change del {
+  color: #dc2626;
+}
+
+.profile-request-change b {
+  color: #16a34a;
+}
+
+.profile-request-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.profile-request-actions button {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: none;
+  padding: 9px 14px;
+  border-radius: 7px;
+  cursor: pointer;
+}
+
+.profile-request-right-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.profile-approve-button {
+  background: #16a34a;
+  color: white;
+}
+
+.profile-reject-button {
+  background: #dc2626;
+  color: white;
+}
+
+.profile-rejection-box {
+  margin-top: 16px;
+}
+
+.profile-rejection-box textarea {
+  width: 100%;
+  min-height: 90px;
+  resize: vertical;
+  padding: 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 7px;
+}
+
+.profile-rejection-box > div {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.profile-reject-confirm {
+  background: #dc2626;
+  color: white;
+}

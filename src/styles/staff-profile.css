@@ -1,0 +1,961 @@
+/* ============================================================
+   STAFF PROFILE PAGE
+============================================================ */
+
+.staff-profile-page {
+  width: 100%;
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 28px;
+  box-sizing: border-box;
+}
+
+
+/* ============================================================
+   HEADER
+============================================================ */
+
+.staff-profile-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 26px;
+}
+
+.staff-profile-eyebrow {
+  margin: 0 0 8px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: #64748b;
+}
+
+.staff-profile-header h1 {
+  margin: 0;
+  font-size: 32px;
+  color: #172033;
+}
+
+.staff-profile-header p {
+  margin: 8px 0 0;
+  color: #64748b;
+}
+
+
+/* ============================================================
+   BUTTONS
+============================================================ */
+
+.staff-profile-edit-button,
+.staff-profile-save-button {
+  border: none;
+  border-radius: 10px;
+  padding: 11px 17px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  font-weight: 700;
+  cursor: pointer;
+
+  background: #315cc7;
+  color: #ffffff;
+
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.staff-profile-edit-button:hover,
+.staff-profile-save-button:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    0 10px 25px
+    rgba(49, 92, 199, 0.22);
+}
+
+.staff-profile-cancel-button {
+  border: 1px solid #dbe2ea;
+  background: #ffffff;
+  color: #475569;
+
+  border-radius: 10px;
+
+  padding: 11px 16px;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  cursor: pointer;
+  font-weight: 700;
+}
+
+
+/* ============================================================
+   MESSAGE
+============================================================ */
+
+.staff-profile-message {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 13px 16px;
+
+  border-radius: 10px;
+
+  margin-bottom: 20px;
+}
+
+.staff-profile-message.success {
+  background: #ecfdf3;
+  border: 1px solid #bbf7d0;
+  color: #166534;
+}
+
+.staff-profile-message.error {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #b91c1c;
+}
+
+
+/* ============================================================
+   PROFILE HERO
+============================================================ */
+
+.staff-profile-hero {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+
+  gap: 24px;
+
+  padding: 28px;
+
+  margin-bottom: 24px;
+
+  border-radius: 18px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #1e3a8a,
+      #315cc7
+    );
+
+  color: #ffffff;
+
+  overflow: hidden;
+}
+
+.staff-profile-hero::before {
+  content: "";
+
+  position: absolute;
+
+  width: 320px;
+  height: 320px;
+
+  border-radius: 50%;
+
+  right: -100px;
+  top: -150px;
+
+  background:
+    rgba(255, 255, 255, 0.08);
+}
+
+.staff-profile-avatar-area {
+  position: relative;
+  z-index: 1;
+}
+
+.staff-profile-avatar-large {
+  position: relative;
+
+  width: 100px;
+  height: 100px;
+
+  border-radius: 24px;
+
+  overflow: hidden;
+
+  background:
+    linear-gradient(
+      135deg,
+      #6d5dfc,
+      #3b82f6
+    );
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 36px;
+  font-weight: 800;
+
+  border:
+    4px solid
+    rgba(255, 255, 255, 0.22);
+}
+
+.staff-profile-avatar-large img {
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+}
+
+.staff-avatar-upload {
+  position: absolute;
+
+  right: 6px;
+  bottom: 6px;
+
+  width: 34px;
+  height: 34px;
+
+  border-radius: 50%;
+
+  border: none;
+
+  background: #ffffff;
+  color: #315cc7;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 6px 15px
+    rgba(0, 0, 0, 0.2);
+}
+
+.staff-profile-hero-info {
+  position: relative;
+  z-index: 1;
+
+  flex: 1;
+}
+
+.staff-profile-hero-info h2 {
+  margin: 0;
+  font-size: 26px;
+}
+
+.staff-profile-role {
+  display: inline-flex;
+
+  margin-top: 8px;
+
+  padding: 5px 10px;
+
+  border-radius: 999px;
+
+  background:
+    rgba(255, 255, 255, 0.16);
+
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.staff-profile-hero-info p {
+  margin: 15px 0;
+  max-width: 650px;
+
+  color:
+    rgba(255, 255, 255, 0.82);
+}
+
+.staff-profile-hero-meta {
+  display: flex;
+  flex-wrap: wrap;
+
+  gap: 16px;
+}
+
+.staff-profile-hero-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+
+  font-size: 13px;
+
+  color:
+    rgba(255, 255, 255, 0.85);
+}
+
+.staff-profile-account-status {
+  position: relative;
+  z-index: 1;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 6px;
+
+  padding: 15px 18px;
+
+  min-width: 130px;
+
+  border-radius: 12px;
+
+  background:
+    rgba(255, 255, 255, 0.12);
+}
+
+.staff-profile-account-status span {
+  font-size: 11px;
+
+  color:
+    rgba(255, 255, 255, 0.7);
+}
+
+.staff-profile-account-status strong {
+  font-size: 14px;
+}
+
+
+/* ============================================================
+   GRID
+============================================================ */
+
+.staff-profile-grid {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    360px;
+
+  gap: 24px;
+
+  align-items: start;
+}
+
+.staff-profile-main-column,
+.staff-profile-side-column {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+
+/* ============================================================
+   CARD
+============================================================ */
+
+.staff-profile-card {
+  background: #ffffff;
+
+  border:
+    1px solid
+    #e4eaf1;
+
+  border-radius: 16px;
+
+  padding: 24px;
+
+  box-shadow:
+    0 5px 18px
+    rgba(15, 23, 42, 0.035);
+}
+
+.staff-profile-card-heading {
+  margin-bottom: 22px;
+}
+
+.staff-profile-card-heading > div {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+
+  color: #315cc7;
+}
+
+.staff-profile-card-heading h3 {
+  margin: 0;
+  color: #1e293b;
+  font-size: 17px;
+}
+
+.staff-profile-card-heading p {
+  margin: 5px 0 0;
+  color: #64748b;
+  font-size: 13px;
+}
+
+
+/* ============================================================
+   FIELDS
+============================================================ */
+
+.staff-profile-fields {
+  display: grid;
+  gap: 18px;
+
+  margin-top: 18px;
+}
+
+.staff-profile-fields.two-columns {
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+}
+
+.staff-profile-fields.three-columns {
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+}
+
+.staff-profile-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.staff-profile-field span {
+  font-size: 13px;
+  font-weight: 700;
+  color: #475569;
+}
+
+.staff-profile-field input,
+.staff-profile-field textarea {
+  width: 100%;
+
+  box-sizing: border-box;
+
+  border:
+    1px solid
+    #d9e0e8;
+
+  background: #ffffff;
+
+  border-radius: 10px;
+
+  padding: 12px 13px;
+
+  font-size: 14px;
+
+  color: #1e293b;
+
+  outline: none;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.staff-profile-field textarea {
+  min-height: 110px;
+  resize: vertical;
+}
+
+.staff-profile-field input:focus,
+.staff-profile-field textarea:focus {
+  border-color: #315cc7;
+
+  box-shadow:
+    0 0 0 3px
+    rgba(49, 92, 199, 0.1);
+}
+
+.staff-profile-field input:disabled,
+.staff-profile-field textarea:disabled {
+  background: #f8fafc;
+  color: #64748b;
+  cursor: default;
+}
+
+
+/* ============================================================
+   CONTACT
+============================================================ */
+
+.staff-contact-item {
+  display: flex;
+  gap: 12px;
+
+  padding: 15px 0;
+
+  border-bottom:
+    1px solid
+    #edf1f5;
+}
+
+.staff-contact-icon {
+  width: 40px;
+  height: 40px;
+
+  flex-shrink: 0;
+
+  border-radius: 10px;
+
+  background: #eff4ff;
+  color: #315cc7;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.staff-contact-item div:last-child {
+  min-width: 0;
+}
+
+.staff-contact-item span {
+  display: block;
+  font-size: 11px;
+  color: #64748b;
+}
+
+.staff-contact-item strong {
+  display: block;
+
+  margin-top: 4px;
+
+  color: #1e293b;
+
+  font-size: 13px;
+
+  overflow-wrap: anywhere;
+}
+
+.staff-contact-item small {
+  display: block;
+
+  margin-top: 4px;
+
+  color: #94a3b8;
+}
+
+.staff-contact-protection {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+
+  padding: 12px;
+
+  margin-top: 15px;
+
+  border-radius: 10px;
+
+  background: #fff7ed;
+
+  color: #9a3412;
+}
+
+.staff-contact-protection p {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.staff-contact-actions {
+  display: grid;
+  gap: 9px;
+
+  margin-top: 16px;
+}
+
+.staff-contact-actions button {
+  border:
+    1px solid
+    #dbe4f0;
+
+  background: #ffffff;
+
+  border-radius: 9px;
+
+  padding: 10px;
+
+  color: #315cc7;
+
+  font-size: 12px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+
+/* ============================================================
+   ACCOUNT
+============================================================ */
+
+.staff-account-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.staff-account-item {
+  display: flex;
+  justify-content: space-between;
+
+  gap: 12px;
+
+  padding: 12px 0;
+
+  border-bottom:
+    1px solid
+    #edf1f5;
+}
+
+.staff-account-item:last-child {
+  border-bottom: none;
+}
+
+.staff-account-item span {
+  font-size: 13px;
+  color: #64748b;
+}
+
+.staff-account-item strong {
+  font-size: 13px;
+  color: #1e293b;
+  text-align: right;
+}
+
+
+/* ============================================================
+   WEBSITE
+============================================================ */
+
+.staff-profile-website-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  color: #315cc7;
+}
+
+.staff-profile-website-card span {
+  display: block;
+  color: #64748b;
+  font-size: 12px;
+}
+
+.staff-profile-website-card a {
+  display: block;
+  margin-top: 4px;
+
+  color: #315cc7;
+  font-weight: 700;
+}
+
+
+/* ============================================================
+   SAVE BAR
+============================================================ */
+
+.staff-profile-save-bar {
+  position: sticky;
+
+  bottom: 15px;
+
+  z-index: 20;
+
+  margin-top: 24px;
+
+  padding: 15px 18px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 20px;
+
+  border-radius: 14px;
+
+  background: #ffffff;
+
+  border:
+    1px solid
+    #dbe4f0;
+
+  box-shadow:
+    0 15px 40px
+    rgba(15, 23, 42, 0.13);
+}
+
+.staff-profile-save-bar strong {
+  display: block;
+  color: #1e293b;
+}
+
+.staff-profile-save-bar span {
+  display: block;
+  margin-top: 4px;
+
+  font-size: 12px;
+  color: #64748b;
+}
+
+.staff-profile-save-bar > div:last-child {
+  display: flex;
+  gap: 10px;
+}
+
+
+/* ============================================================
+   MODAL
+============================================================ */
+
+.staff-profile-modal-overlay {
+  position: fixed;
+
+  inset: 0;
+
+  z-index: 10000;
+
+  padding: 20px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background:
+    rgba(15, 23, 42, 0.55);
+}
+
+.staff-profile-modal {
+  width: 100%;
+  max-width: 500px;
+
+  background: #ffffff;
+
+  border-radius: 16px;
+
+  padding: 24px;
+
+  box-shadow:
+    0 30px 80px
+    rgba(0, 0, 0, 0.25);
+}
+
+.staff-profile-modal-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+
+  margin-bottom: 20px;
+}
+
+.staff-profile-modal-heading h3 {
+  margin: 0;
+  color: #1e293b;
+}
+
+.staff-profile-modal-heading p {
+  margin: 7px 0 0;
+
+  color: #64748b;
+
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.staff-profile-modal-heading button {
+  border: none;
+  background: transparent;
+
+  cursor: pointer;
+  color: #64748b;
+}
+
+.staff-profile-modal form {
+  display: grid;
+  gap: 17px;
+}
+
+.staff-profile-modal label {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+
+  font-size: 13px;
+  font-weight: 700;
+
+  color: #475569;
+}
+
+.staff-profile-modal input,
+.staff-profile-modal textarea {
+  width: 100%;
+
+  box-sizing: border-box;
+
+  border:
+    1px solid
+    #dbe3eb;
+
+  border-radius: 10px;
+
+  padding: 12px;
+
+  outline: none;
+
+  font: inherit;
+}
+
+.staff-profile-modal textarea {
+  min-height: 110px;
+  resize: vertical;
+}
+
+.staff-profile-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+
+  gap: 10px;
+}
+
+.staff-profile-modal-actions button {
+  border:
+    1px solid
+    #dbe3eb;
+
+  background: #ffffff;
+
+  border-radius: 9px;
+
+  padding: 10px 15px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.staff-profile-modal-actions button[type="submit"] {
+  background: #315cc7;
+  color: #ffffff;
+
+  border-color: #315cc7;
+}
+
+
+/* ============================================================
+   SPINNER
+============================================================ */
+
+.staff-spin {
+  animation:
+    staffProfileSpin
+    0.8s
+    linear
+    infinite;
+}
+
+@keyframes staffProfileSpin {
+
+  to {
+    transform: rotate(360deg);
+  }
+
+}
+
+
+/* ============================================================
+   RESPONSIVE
+============================================================ */
+
+@media (
+  max-width: 1150px
+) {
+
+  .staff-profile-grid {
+    grid-template-columns: 1fr;
+  }
+
+}
+
+
+@media (
+  max-width: 800px
+) {
+
+  .staff-profile-page {
+    padding: 18px;
+  }
+
+
+  .staff-profile-header {
+    flex-direction: column;
+  }
+
+
+  .staff-profile-hero {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+
+  .staff-profile-account-status {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+
+  .staff-profile-fields.two-columns,
+  .staff-profile-fields.three-columns {
+    grid-template-columns: 1fr;
+  }
+
+
+  .staff-profile-save-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+
+  .staff-profile-save-bar > div:last-child {
+    justify-content: flex-end;
+  }
+
+}
+
+
+@media (
+  max-width: 520px
+) {
+
+  .staff-profile-page {
+    padding: 14px;
+  }
+
+
+  .staff-profile-header h1 {
+    font-size: 26px;
+  }
+
+
+  .staff-profile-card {
+    padding: 18px;
+  }
+
+
+  .staff-profile-save-bar > div:last-child {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+
+  .staff-profile-save-button,
+  .staff-profile-cancel-button {
+    width: 100%;
+    justify-content: center;
+  }
+
+
+  .staff-profile-modal {
+    padding: 18px;
+  }
+
+}

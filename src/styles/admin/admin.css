@@ -1,0 +1,13 @@
+.admin-scope .staff-role-chip {
+  background: #e9f7ef;
+  color: #147a45;
+}
+
+.admin-scope .staff-page-head h1 {
+  letter-spacing: -0.02em;
+}
+
+.admin-scope .staff-nav a.active {
+  background: #eaf7ef;
+  color: #147a45;
+}

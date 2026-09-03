@@ -1,0 +1,35 @@
+.editor-scope .status-submitted,
+.editor-scope .status-pending_review,
+.editor-scope .status-admin_review,
+.editor-scope .status-super_admin_review,
+.editor-scope .status-pending_admin_review,
+.editor-scope .status-pending_superadmin_review {
+  background: #fff4df;
+  color: #a05a00;
+}
+
+.editor-scope .status-changes_requested,
+.editor-scope .status-revision_required {
+  background: #fff7e6;
+  color: #a15c00;
+}
+
+.editor-scope .status-approved {
+  background: #e9f7ef;
+  color: #147a45;
+}
+
+.editor-scope .status-scheduled {
+  background: #eef4ff;
+  color: #2455a5;
+}
+
+.editor-scope .status-published {
+  background: #e9f7ef;
+  color: #147a45;
+}
+
+.editor-scope .status-rejected {
+  background: #fff1f0;
+  color: #b42318;
+}

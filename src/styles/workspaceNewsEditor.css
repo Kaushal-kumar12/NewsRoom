@@ -1,0 +1,1060 @@
+.workspace-editor-page {
+
+  width: 100%;
+
+  max-width: 1450px;
+
+  min-width: 0;
+
+  box-sizing: border-box;
+
+  overflow-x: clip;
+
+  margin: 0 auto;
+
+  padding: 28px;
+
+}
+
+
+/* ============================================================
+   HEADER
+============================================================ */
+
+.workspace-editor-header {
+
+  display: flex;
+
+  align-items: flex-start;
+
+  justify-content: space-between;
+
+  gap: 24px;
+
+  min-width: 0;
+
+  margin-bottom: 28px;
+
+}
+
+
+.workspace-editor-back {
+
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 7px;
+
+  border: 1px solid #d9dee8;
+
+  background: #ffffff;
+
+  color: #344054;
+
+  border-radius: 8px;
+
+  padding: 8px 12px;
+
+  cursor: pointer;
+
+  margin-bottom: 16px;
+
+}
+
+
+.workspace-editor-eyebrow {
+
+  display: block;
+
+  font-size: 11px;
+
+  font-weight: 800;
+
+  letter-spacing: 0.16em;
+
+  color: #5d77b8;
+
+  margin-bottom: 6px;
+
+}
+
+
+.workspace-editor-header h1 {
+
+  margin: 0;
+
+  font-size: 34px;
+
+  color: #243b5a;
+
+}
+
+
+.workspace-editor-header p {
+
+  margin: 8px 0 0;
+
+  color: #667085;
+
+  font-size: 16px;
+
+}
+
+
+.workspace-editor-status {
+
+  background: #eef4ff;
+
+  color: #315ea8;
+
+  font-size: 12px;
+
+  font-weight: 800;
+
+  padding: 8px 13px;
+
+  border-radius: 999px;
+
+  white-space: nowrap;
+
+}
+
+
+/* ============================================================
+   CARDS
+============================================================ */
+
+.workspace-editor-card {
+
+  width: 100%;
+
+  min-width: 0;
+
+  box-sizing: border-box;
+
+  background: #ffffff;
+
+  border: 1px solid #dce3ee;
+
+  border-radius: 14px;
+
+  padding: 24px;
+
+  margin-bottom: 22px;
+
+  box-shadow:
+    0 8px 24px
+    rgba(15, 23, 42, 0.04);
+
+}
+
+
+.workspace-card-heading {
+
+  display: flex;
+
+  align-items: flex-start;
+
+  justify-content: space-between;
+
+  gap: 20px;
+
+  min-width: 0;
+
+  padding-bottom: 18px;
+
+  margin-bottom: 20px;
+
+  border-bottom:
+    1px solid #e8edf4;
+
+}
+
+
+.workspace-card-heading h2 {
+
+  margin: 0;
+
+  color: #263d5c;
+
+  font-size: 19px;
+
+}
+
+
+.workspace-card-heading p {
+
+  margin: 5px 0 0;
+
+  color: #7a8798;
+
+  font-size: 14px;
+
+}
+
+
+/* ============================================================
+   FORM
+============================================================ */
+
+.workspace-form-grid {
+
+  width: 100%;
+
+  min-width: 0;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 18px;
+
+}
+
+
+.workspace-field {
+
+  min-width: 0;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 7px;
+
+  color: #344054;
+
+  font-size: 14px;
+
+  font-weight: 600;
+
+}
+
+
+.workspace-field-full {
+
+  grid-column: 1 / -1;
+
+}
+
+
+.workspace-field input,
+
+.workspace-field textarea,
+
+.workspace-block-fields input,
+
+.workspace-block-fields textarea,
+
+.workspace-block-fields select,
+
+.workspace-content-block textarea {
+
+  width: 100%;
+
+  max-width: 100%;
+
+  min-width: 0;
+
+  box-sizing: border-box;
+
+  border: 1px solid #d7dee9;
+
+  background: #ffffff;
+
+  border-radius: 9px;
+
+  padding: 12px 13px;
+
+  font-family: inherit;
+
+  font-size: 14px;
+
+  color: #344054;
+
+  outline: none;
+
+}
+
+
+.workspace-field textarea,
+
+.workspace-content-block textarea {
+
+  resize: vertical;
+
+}
+
+
+.workspace-field input:focus,
+
+.workspace-field textarea:focus,
+
+.workspace-block-fields input:focus,
+
+.workspace-block-fields textarea:focus,
+
+.workspace-block-fields select:focus,
+
+.workspace-content-block textarea:focus {
+
+  border-color: #4d78d8;
+
+  box-shadow:
+    0 0 0 3px
+    rgba(77, 120, 216, 0.12);
+
+}
+
+
+.workspace-field input:disabled,
+
+.workspace-field textarea:disabled,
+
+.workspace-block-fields input:disabled,
+
+.workspace-block-fields textarea:disabled,
+
+.workspace-block-fields select:disabled,
+
+.workspace-content-block textarea:disabled {
+
+  background: #f5f7fa;
+
+  cursor: not-allowed;
+
+}
+
+
+/* ============================================================
+   BLOCK MENU
+============================================================ */
+
+.workspace-block-menu-wrapper {
+
+  position: relative;
+
+  flex: 0 0 auto;
+
+}
+
+
+.workspace-block-menu-wrapper.workspace-block-menu-bottom {
+
+  display: flex;
+
+  justify-content: flex-end;
+
+  margin-top: 18px;
+
+}
+
+
+.workspace-add-block-button {
+
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 7px;
+
+  border: none;
+
+  background: #3f6ed4;
+
+  color: #ffffff;
+
+  padding: 10px 16px;
+
+  min-height: 44px;
+
+  border-radius: 8px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  white-space: nowrap;
+
+  box-shadow:
+    0 6px 18px
+    rgba(63, 110, 212, 0.18);
+
+}
+
+
+.workspace-add-block-button:hover {
+
+  background: #315fc3;
+
+}
+
+
+.workspace-block-menu {
+
+  position: absolute;
+
+  top: calc(100% + 10px);
+
+  right: 0;
+
+  width: min(320px, calc(100vw - 48px));
+
+  z-index: 50;
+
+  background: #ffffff;
+
+  border: 1px solid #dce3ee;
+
+  border-radius: 12px;
+
+  padding: 8px;
+
+  box-sizing: border-box;
+
+  box-shadow:
+    0 16px 35px
+    rgba(15, 23, 42, 0.14);
+
+}
+
+
+.workspace-block-menu-wrapper.workspace-block-menu-bottom
+.workspace-block-menu {
+
+  top: auto;
+
+  bottom: calc(100% + 10px);
+
+}
+
+
+.workspace-block-menu button {
+
+  width: 100%;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+
+  padding: 11px;
+
+  border: none;
+
+  background: transparent;
+
+  text-align: left;
+
+  border-radius: 8px;
+
+  cursor: pointer;
+
+}
+
+
+.workspace-block-menu button:hover {
+
+  background: #f2f6ff;
+
+}
+
+
+.workspace-block-menu span {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 2px;
+
+}
+
+
+.workspace-block-menu strong {
+
+  color: #344054;
+
+  font-size: 13px;
+
+}
+
+
+.workspace-block-menu small {
+
+  color: #7a8798;
+
+  font-size: 11px;
+
+}
+
+
+/* ============================================================
+   CONTENT BLOCKS
+============================================================ */
+
+.workspace-block-list {
+
+  width: 100%;
+
+  min-width: 0;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 16px;
+
+}
+
+
+.workspace-content-block {
+
+  width: 100%;
+
+  min-width: 0;
+
+  box-sizing: border-box;
+
+  border: 1px solid #dce3ee;
+
+  background: #fafbfd;
+
+  border-radius: 12px;
+
+  padding: 16px;
+
+}
+
+
+.workspace-block-header {
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 12px;
+
+  min-width: 0;
+
+  margin-bottom: 13px;
+
+}
+
+
+.workspace-block-header > span {
+
+  min-width: 0;
+
+  text-transform: uppercase;
+
+  font-size: 11px;
+
+  letter-spacing: 0.08em;
+
+  font-weight: 800;
+
+  color: #667085;
+
+}
+
+
+.workspace-block-actions {
+
+  display: flex;
+
+  flex-shrink: 0;
+
+  gap: 6px;
+
+}
+
+
+.workspace-block-actions button {
+
+  width: 32px;
+
+  height: 32px;
+
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border: 1px solid #dce3ee;
+
+  background: #ffffff;
+
+  border-radius: 7px;
+
+  cursor: pointer;
+
+  color: #667085;
+
+}
+
+
+.workspace-block-actions button:hover {
+
+  background: #f1f5fb;
+
+}
+
+
+.workspace-block-actions button:disabled {
+
+  opacity: 0.4;
+
+  cursor: not-allowed;
+
+}
+
+
+.workspace-block-fields {
+
+  width: 100%;
+
+  min-width: 0;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 12px;
+
+}
+
+
+.workspace-youtube-preview {
+
+  width: 100%;
+
+  max-width: 100%;
+
+  min-height: 320px;
+
+  border: none;
+
+  border-radius: 10px;
+
+}
+
+
+.workspace-divider-preview {
+
+  border: none;
+
+  border-top: 2px solid #dce3ee;
+
+  margin: 20px 0;
+
+}
+
+
+/* ============================================================
+   ADD BLOCK BOTTOM AREA
+============================================================ */
+
+.workspace-add-block-bottom {
+
+  width: 100%;
+
+  display: flex;
+
+  justify-content: flex-end;
+
+  margin-top: 20px;
+
+  padding-top: 18px;
+
+  border-top:
+    1px solid #e8edf4;
+
+}
+
+
+/* ============================================================
+   ACTIONS
+============================================================ */
+
+.workspace-editor-actions {
+
+  position: sticky;
+
+  bottom: 18px;
+
+  z-index: 10;
+
+  width: 100%;
+
+  box-sizing: border-box;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  padding: 14px;
+
+  background: #ffffff;
+
+  border: 1px solid #dce3ee;
+
+  border-radius: 14px;
+
+  box-shadow:
+    0 12px 30px
+    rgba(15, 23, 42, 0.12);
+
+}
+
+
+.workspace-editor-actions button {
+
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 7px;
+
+  border-radius: 8px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+}
+
+
+.workspace-editor-actions button:disabled {
+
+  opacity: 0.6;
+
+  cursor: not-allowed;
+
+}
+
+
+.workspace-action-draft {
+
+  border: 1px solid #d5dce7;
+
+  background: #ffffff;
+
+  color: #475467;
+
+  padding: 10px 14px;
+
+}
+
+
+.workspace-action-preview {
+
+  border: 1px solid #d5dce7;
+
+  background: #f8fafc;
+
+  color: #475467;
+
+  padding: 10px 14px;
+
+}
+
+
+.workspace-action-spacer {
+
+  flex: 1;
+
+}
+
+
+.workspace-action-review {
+
+  border: 1px solid #cfd8ea;
+
+  background: #f6f8fc;
+
+  color: #52627a;
+
+  padding: 10px 14px;
+
+  font-size: 12px;
+
+}
+
+
+/* ============================================================
+   ALERTS
+============================================================ */
+
+.workspace-editor-success,
+
+.workspace-editor-error,
+
+.workspace-editor-info {
+
+  width: 100%;
+
+  box-sizing: border-box;
+
+  padding: 13px 15px;
+
+  border-radius: 9px;
+
+  margin-bottom: 18px;
+
+}
+
+
+.workspace-editor-success {
+
+  background: #ecfdf3;
+
+  border: 1px solid #abefc6;
+
+  color: #067647;
+
+}
+
+
+.workspace-editor-error {
+
+  background: #fef3f2;
+
+  border: 1px solid #fecdca;
+
+  color: #b42318;
+
+}
+
+
+.workspace-editor-info {
+
+  background: #eff8ff;
+
+  border: 1px solid #b2ddff;
+
+  color: #175cd3;
+
+}
+
+
+/* ============================================================
+   LOADING
+============================================================ */
+
+.workspace-editor-loading {
+
+  padding: 80px;
+
+  text-align: center;
+
+  color: #667085;
+
+}
+
+
+/* ============================================================
+   RESPONSIVE
+============================================================ */
+
+@media (max-width: 850px) {
+
+  .workspace-editor-page {
+
+    padding: 18px;
+
+  }
+
+
+  .workspace-editor-header {
+
+    flex-direction: column;
+
+  }
+
+
+  .workspace-editor-status {
+
+    align-self: flex-start;
+
+  }
+
+
+  .workspace-form-grid {
+
+    grid-template-columns: 1fr;
+
+  }
+
+
+  .workspace-field-full {
+
+    grid-column: auto;
+
+  }
+
+
+  .workspace-card-heading {
+
+    flex-direction: column;
+
+  }
+
+
+  .workspace-editor-actions {
+
+    flex-wrap: wrap;
+
+    position: static;
+
+  }
+
+
+  .workspace-action-spacer {
+
+    display: none;
+
+  }
+
+
+  .workspace-action-review {
+
+    flex: 1;
+
+  }
+
+}
+
+
+@media (max-width: 560px) {
+
+  .workspace-editor-page {
+
+    padding: 12px;
+
+  }
+
+
+  .workspace-editor-card {
+
+    padding: 16px;
+
+  }
+
+
+  .workspace-editor-header h1 {
+
+    font-size: 27px;
+
+  }
+
+
+  .workspace-editor-actions {
+
+    display: grid;
+
+    grid-template-columns:
+      repeat(2, 1fr);
+
+  }
+
+
+  .workspace-editor-actions button {
+
+    width: 100%;
+
+  }
+
+
+  .workspace-action-spacer {
+
+    display: none;
+
+  }
+
+
+  .workspace-add-block-bottom {
+
+    justify-content: stretch;
+
+  }
+
+
+  .workspace-block-menu-wrapper.workspace-block-menu-bottom {
+
+    width: 100%;
+
+  }
+
+
+  .workspace-add-block-button {
+
+    width: 100%;
+
+  }
+
+
+  .workspace-block-menu {
+
+    position: fixed;
+
+    left: 12px;
+
+    right: 12px;
+
+    bottom: 12px;
+
+    top: auto;
+
+    width: auto;
+
+    max-height: 70vh;
+
+    overflow-y: auto;
+
+  }
+
+
+  .workspace-block-menu-wrapper.workspace-block-menu-bottom
+  .workspace-block-menu {
+
+    bottom: 12px;
+
+  }
+
+
+  .workspace-block-header {
+
+    align-items: flex-start;
+
+  }
+
+
+  .workspace-block-actions {
+
+    flex-wrap: wrap;
+
+    justify-content: flex-end;
+
+  }
+
+
+  .workspace-youtube-preview {
+
+    min-height: 220px;
+
+  }
+
+}

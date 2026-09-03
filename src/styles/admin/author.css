@@ -1,0 +1,13 @@
+.author-scope .staff-role-chip {
+  background: #eee9ff;
+  color: #6841c6;
+}
+
+.author-scope .staff-page-head h1 {
+  letter-spacing: -0.01em;
+}
+
+.author-scope .staff-nav a.active {
+  background: #f1edff;
+  color: #6841c6;
+}

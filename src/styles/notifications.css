@@ -1,0 +1,148 @@
+.notification-bell {
+  position: relative;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.notification-badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 4px;
+  border-radius: 20px;
+  background: #dc2626;
+  color: white;
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.notifications-page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 25px;
+}
+
+.notifications-page-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.notifications-title-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.notifications-title-row h1 {
+  margin: 0;
+}
+
+.notifications-page-header p {
+  color: #6b7280;
+}
+
+.notifications-mark-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.notifications-summary {
+  margin-bottom: 20px;
+  color: #6b7280;
+}
+
+.notifications-summary span {
+  font-weight: 700;
+  color: #111827;
+}
+
+.notifications-list {
+  display: grid;
+  gap: 12px;
+}
+
+.notification-item {
+  width: 100%;
+  text-align: left;
+  display: flex;
+  gap: 15px;
+  padding: 18px;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.notification-item-unread {
+  background: #f0f7ff;
+  border-color: #bfdbfe;
+}
+
+.notification-icon {
+  padding-top: 3px;
+}
+
+.notification-body {
+  flex: 1;
+}
+
+.notification-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.notification-body p {
+  margin: 7px 0;
+  color: #6b7280;
+}
+
+.notification-date {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #9ca3af;
+  font-size: 12px;
+}
+
+.notification-unread-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #2563eb;
+}
+
+.notifications-empty {
+  min-height: 250px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #6b7280;
+}
+
+@media (max-width: 700px) {
+
+  .notifications-page-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+}

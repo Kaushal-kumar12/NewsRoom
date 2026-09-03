@@ -1,0 +1,1207 @@
+/* =========================================================
+   NEWSROOM PUBLIC HEADER
+   USER PROFILE + NAVIGATION MENU
+========================================================= */
+
+
+/* =========================================================
+   LOGIN BUTTON
+========================================================= */
+
+.ph-login-button {
+  min-height: 42px;
+
+  padding: 0 16px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  border-radius: 12px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #234f9a,
+      #17396f
+    );
+
+  color: #ffffff;
+
+  text-decoration: none;
+
+  font-size: 13px;
+  font-weight: 700;
+
+  box-shadow:
+    0 8px 18px
+    rgba(
+      31,
+      79,
+      163,
+      0.18
+    );
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+
+.ph-login-button:hover {
+  color: #ffffff;
+
+  transform:
+    translateY(-2px);
+
+  box-shadow:
+    0 12px 25px
+    rgba(
+      31,
+      79,
+      163,
+      0.28
+    );
+}
+
+
+/* =========================================================
+   USER MENU WRAPPER
+========================================================= */
+
+.ph-user-menu {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+
+  z-index: 300;
+}
+
+
+/* =========================================================
+   PROFILE BUTTON
+========================================================= */
+
+.ph-user-trigger {
+  min-height: 48px;
+
+  padding: 4px 8px 4px 4px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 9px;
+
+  border: 1px solid transparent;
+
+  border-radius: 14px;
+
+  background: transparent;
+
+  color: #243047;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+
+.ph-user-trigger:hover,
+.ph-user-trigger.is-open {
+  background:
+    rgba(
+      31,
+      79,
+      163,
+      0.06
+    );
+
+  border-color:
+    rgba(
+      31,
+      79,
+      163,
+      0.12
+    );
+}
+
+
+.ph-user-trigger:hover {
+  transform:
+    translateY(-1px);
+}
+
+
+/* =========================================================
+   AVATAR
+========================================================= */
+
+.ph-user-avatar {
+  width: 42px;
+  height: 42px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  overflow: hidden;
+
+  border-radius: 50%;
+
+  background:
+    linear-gradient(
+      135deg,
+      #315da8,
+      #4a42a8
+    );
+
+  color: #ffffff;
+
+  font-size: 17px;
+  font-weight: 800;
+
+  box-shadow:
+    0 7px 17px
+    rgba(
+      49,
+      93,
+      168,
+      0.25
+    );
+
+  flex-shrink: 0;
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+
+.ph-user-trigger:hover
+.ph-user-avatar {
+  transform:
+    scale(1.05);
+
+  box-shadow:
+    0 10px 22px
+    rgba(
+      49,
+      93,
+      168,
+      0.32
+    );
+}
+
+
+.ph-user-avatar img {
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+}
+
+
+/* =========================================================
+   USER NAME
+========================================================= */
+
+.ph-user-trigger-info {
+  display: flex;
+  align-items: center;
+
+  max-width: 145px;
+
+  overflow: hidden;
+}
+
+
+.ph-user-trigger-info strong {
+  overflow: hidden;
+
+  color: #263246;
+
+  font-size: 13px;
+  font-weight: 700;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   CHEVRON
+========================================================= */
+
+.ph-user-chevron {
+  color: #718096;
+
+  flex-shrink: 0;
+
+  transition:
+    transform 0.25s ease,
+    color 0.25s ease;
+}
+
+
+.ph-user-trigger.is-open
+.ph-user-chevron {
+  color: #1f4fa3;
+
+  transform:
+    rotate(180deg);
+}
+
+
+/* =========================================================
+   USER DROPDOWN
+========================================================= */
+
+.ph-user-dropdown {
+  position: absolute;
+
+  top:
+    calc(
+      100% + 12px
+    );
+
+  right: 0;
+
+  width: 310px;
+
+  overflow: hidden;
+
+  border:
+    1px solid
+    rgba(
+      215,
+      222,
+      234,
+      0.9
+    );
+
+  border-radius: 18px;
+
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.98
+    );
+
+  box-shadow:
+    0 20px 55px
+    rgba(
+      25,
+      39,
+      66,
+      0.16
+    );
+
+  backdrop-filter:
+    blur(16px);
+
+  transform-origin:
+    top right;
+
+  animation:
+    ph-user-dropdown-enter
+    0.22s
+    ease-out;
+
+  z-index: 500;
+}
+
+
+@keyframes
+ph-user-dropdown-enter {
+
+  from {
+
+    opacity: 0;
+
+    transform:
+      translateY(-8px)
+      scale(0.97);
+
+  }
+
+
+  to {
+
+    opacity: 1;
+
+    transform:
+      translateY(0)
+      scale(1);
+
+  }
+
+}
+
+
+/* =========================================================
+   USER DROPDOWN HEADER
+========================================================= */
+
+.ph-user-dropdown-header {
+  position: relative;
+
+  min-height: 92px;
+
+  padding: 20px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 13px;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(
+        31,
+        79,
+        163,
+        0.1
+      ),
+      rgba(
+        74,
+        66,
+        168,
+        0.06
+      )
+    );
+
+  border-bottom:
+    1px solid
+    rgba(
+      225,
+      230,
+      238,
+      0.8
+    );
+}
+
+
+.ph-user-dropdown-header::after {
+  content: "";
+
+  position: absolute;
+
+  width: 120px;
+  height: 120px;
+
+  top: -65px;
+  right: -40px;
+
+  border-radius: 50%;
+
+  background:
+    rgba(
+      31,
+      79,
+      163,
+      0.08
+    );
+
+  pointer-events: none;
+}
+
+
+/* =========================================================
+   DROPDOWN AVATAR
+========================================================= */
+
+.ph-user-dropdown-avatar {
+  position: relative;
+
+  width: 52px;
+  height: 52px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  overflow: hidden;
+
+  border-radius: 16px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #315da8,
+      #4a42a8
+    );
+
+  color: #ffffff;
+
+  font-size: 21px;
+  font-weight: 800;
+
+  box-shadow:
+    0 8px 20px
+    rgba(
+      49,
+      93,
+      168,
+      0.25
+    );
+
+  flex-shrink: 0;
+
+  z-index: 1;
+}
+
+
+.ph-user-dropdown-avatar img {
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+}
+
+
+/* =========================================================
+   USER DETAILS
+========================================================= */
+
+.ph-user-dropdown-details {
+  position: relative;
+
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 5px;
+
+  z-index: 1;
+}
+
+
+.ph-user-dropdown-details strong {
+  overflow: hidden;
+
+  color: #1f2937;
+
+  font-size: 15px;
+  font-weight: 800;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+.ph-user-dropdown-details span {
+  overflow: hidden;
+
+  color: #718096;
+
+  font-size: 12px;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   USER DROPDOWN MENU
+========================================================= */
+
+.ph-user-dropdown-menu {
+  padding: 10px;
+}
+
+
+.ph-user-dropdown-menu a {
+  min-height: 48px;
+
+  padding: 0 11px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 11px;
+
+  border-radius: 11px;
+
+  color: #3a4658;
+
+  text-decoration: none;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+
+.ph-user-dropdown-menu a:hover {
+  background:
+    rgba(
+      31,
+      79,
+      163,
+      0.07
+    );
+
+  color: #1f4fa3;
+
+  transform:
+    translateX(3px);
+}
+
+
+/* =========================================================
+   MENU ICON
+========================================================= */
+
+.ph-menu-icon {
+  width: 34px;
+  height: 34px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 9px;
+
+  background:
+    #f1f5fb;
+
+  color: #315da8;
+
+  flex-shrink: 0;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+
+.ph-user-dropdown-menu
+a:hover
+.ph-menu-icon {
+  background: #315da8;
+
+  color: #ffffff;
+}
+
+
+/* =========================================================
+   MENU ARROW
+========================================================= */
+
+.ph-menu-arrow {
+  margin-left: auto;
+
+  color: #a0aabd;
+
+  font-size: 23px;
+  line-height: 1;
+
+  transition:
+    transform 0.2s ease,
+    color 0.2s ease;
+}
+
+
+.ph-user-dropdown-menu
+a:hover
+.ph-menu-arrow {
+  color: #315da8;
+
+  transform:
+    translateX(3px);
+}
+
+
+/* =========================================================
+   USER DROPDOWN FOOTER
+========================================================= */
+
+.ph-user-dropdown-footer {
+  padding: 10px;
+
+  border-top:
+    1px solid
+    #edf0f5;
+}
+
+
+.ph-user-dropdown-footer button {
+  width: 100%;
+  min-height: 46px;
+
+  padding: 0 12px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 11px;
+
+  border: none;
+
+  border-radius: 11px;
+
+  background: transparent;
+
+  color: #c43d48;
+
+  cursor: pointer;
+
+  font-size: 14px;
+  font-weight: 700;
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+
+.ph-user-dropdown-footer
+button:hover {
+  background:
+    rgba(
+      216,
+      52,
+      61,
+      0.08
+    );
+
+  transform:
+    translateX(2px);
+}
+
+
+/* =========================================================
+   NAVIGATION MENU
+========================================================= */
+
+.ph-mobile-menu {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+
+  z-index: 250;
+}
+
+
+/* =========================================================
+   MENU BUTTON
+========================================================= */
+
+.ph-mobile-menu-trigger {
+  width: 44px;
+  height: 44px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border:
+    1px solid
+    #d6dde8;
+
+  border-radius: 12px;
+
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.95
+    );
+
+  color: #273449;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 4px 12px
+    rgba(
+      20,
+      34,
+      58,
+      0.05
+    );
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+
+.ph-mobile-menu-trigger:hover {
+  background:
+    #f3f6fb;
+
+  border-color:
+    #b8c7df;
+
+  transform:
+    translateY(-2px);
+
+  box-shadow:
+    0 8px 18px
+    rgba(
+      20,
+      34,
+      58,
+      0.1
+    );
+}
+
+
+.ph-mobile-menu-trigger.is-open {
+  background:
+    #1f4fa3;
+
+  border-color:
+    #1f4fa3;
+
+  color: #ffffff;
+
+  transform:
+    rotate(90deg);
+}
+
+
+/* =========================================================
+   NAVIGATION PANEL
+========================================================= */
+
+.ph-mobile-menu-panel {
+  position: absolute;
+
+  top:
+    calc(
+      100% + 12px
+    );
+
+  right: 0;
+
+  width: 330px;
+
+  max-height:
+    min(
+      650px,
+      calc(
+        100vh - 110px
+      )
+    );
+
+  overflow-y: auto;
+
+  border:
+    1px solid
+    rgba(
+      215,
+      222,
+      234,
+      0.9
+    );
+
+  border-radius: 18px;
+
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.98
+    );
+
+  box-shadow:
+    0 22px 60px
+    rgba(
+      20,
+      34,
+      58,
+      0.17
+    );
+
+  backdrop-filter:
+    blur(18px);
+
+  animation:
+    ph-mobile-menu-enter
+    0.24s
+    ease-out;
+
+  z-index: 600;
+}
+
+
+@keyframes
+ph-mobile-menu-enter {
+
+  from {
+
+    opacity: 0;
+
+    transform:
+      translateY(-10px)
+      scale(0.97);
+
+  }
+
+
+  to {
+
+    opacity: 1;
+
+    transform:
+      translateY(0)
+      scale(1);
+
+  }
+
+}
+
+
+/* =========================================================
+   NAVIGATION HEADER
+========================================================= */
+
+.ph-mobile-menu-header {
+  position: relative;
+
+  min-height: 90px;
+
+  padding: 20px;
+
+  display: flex;
+  align-items: center;
+
+  overflow: hidden;
+
+  background:
+    linear-gradient(
+      135deg,
+      #1f4fa3,
+      #17396f
+    );
+
+  color: #ffffff;
+}
+
+
+.ph-mobile-menu-header::after {
+  content: "";
+
+  position: absolute;
+
+  width: 130px;
+  height: 130px;
+
+  right: -45px;
+  top: -55px;
+
+  border-radius: 50%;
+
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.1
+    );
+}
+
+
+.ph-mobile-menu-header div {
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 5px;
+
+  z-index: 1;
+}
+
+
+.ph-mobile-menu-header span {
+  color:
+    rgba(
+      255,
+      255,
+      255,
+      0.65
+    );
+
+  font-size: 10px;
+  font-weight: 800;
+
+  letter-spacing: 0.16em;
+}
+
+
+.ph-mobile-menu-header strong {
+  font-size: 20px;
+  font-weight: 800;
+}
+
+
+/* =========================================================
+   MENU SECTION
+========================================================= */
+
+.ph-mobile-menu-section {
+  padding: 16px;
+}
+
+
+.ph-mobile-menu-section
++
+.ph-mobile-menu-section {
+  border-top:
+    1px solid
+    #edf0f5;
+}
+
+
+/* =========================================================
+   MENU LABEL
+========================================================= */
+
+.ph-mobile-menu-label {
+  display: block;
+
+  margin-bottom: 10px;
+
+  color: #8a96a8;
+
+  font-size: 10px;
+  font-weight: 800;
+
+  letter-spacing: 0.12em;
+}
+
+
+/* =========================================================
+   NAVIGATION LINKS
+========================================================= */
+
+.ph-mobile-menu-section > a {
+  min-height: 43px;
+
+  padding: 0 12px;
+
+  display: flex;
+  align-items: center;
+
+  border-radius: 10px;
+
+  color: #354154;
+
+  text-decoration: none;
+
+  font-size: 14px;
+  font-weight: 650;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+
+.ph-mobile-menu-section > a:hover {
+  background:
+    rgba(
+      31,
+      79,
+      163,
+      0.07
+    );
+
+  color: #1f4fa3;
+
+  transform:
+    translateX(4px);
+}
+
+
+/* =========================================================
+   CATEGORY LIST
+========================================================= */
+
+.ph-mobile-category-list {
+  display: flex;
+  flex-wrap: wrap;
+
+  gap: 8px;
+}
+
+
+.ph-mobile-category-list a {
+  padding: 9px 12px;
+
+  border:
+    1px solid
+    #e2e8f0;
+
+  border-radius: 999px;
+
+  background: #f8fafc;
+
+  color: #566274;
+
+  text-decoration: none;
+
+  font-size: 12px;
+  font-weight: 700;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+
+.ph-mobile-category-list a:hover {
+  border-color:
+    rgba(
+      31,
+      79,
+      163,
+      0.35
+    );
+
+  background:
+    #1f4fa3;
+
+  color: #ffffff;
+
+  transform:
+    translateY(-2px);
+}
+
+
+/* =========================================================
+   SCROLLBAR
+========================================================= */
+
+.ph-mobile-menu-panel::-webkit-scrollbar {
+  width: 6px;
+}
+
+
+.ph-mobile-menu-panel
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+
+.ph-mobile-menu-panel
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+
+  background:
+    #cbd5e1;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (
+  max-width: 1100px
+) {
+
+  .ph-user-trigger-info {
+    display: none;
+  }
+
+
+  .ph-user-trigger {
+    padding: 3px;
+  }
+
+}
+
+
+@media (
+  max-width: 700px
+) {
+
+  .ph-user-dropdown {
+    position: fixed;
+
+    top: 75px;
+
+    right: 16px;
+
+    width:
+      calc(
+        100vw - 32px
+      );
+
+    max-width: 350px;
+  }
+
+
+  .ph-mobile-menu-panel {
+    position: fixed;
+
+    top: 75px;
+
+    right: 16px;
+
+    width:
+      calc(
+        100vw - 32px
+      );
+
+    max-width: 350px;
+
+    max-height:
+      calc(
+        100vh - 95px
+      );
+  }
+
+
+  .ph-user-trigger-info {
+    display: none;
+  }
+
+}
+
+
+@media (
+  max-width: 420px
+) {
+
+  .ph-user-avatar {
+    width: 39px;
+    height: 39px;
+  }
+
+
+  .ph-mobile-menu-trigger {
+    width: 42px;
+    height: 42px;
+  }
+
+}
+
+

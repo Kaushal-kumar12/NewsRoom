@@ -1,0 +1,32 @@
+# Dependencies
+node_modules/
+
+# Build files
+dist/
+build/
+
+# Environment files
+.env
+.env.local
+.env.development.local
+.env.production.local
+.env.example
+srs_extracted.txt
+storeage.rules
+firestore.rules
+
+
+# Firebase
+.firebase/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+
+# IDE
+.vscode/
+.idea/
+
+# Operating system
+.DS_Store
+Thumbs.db

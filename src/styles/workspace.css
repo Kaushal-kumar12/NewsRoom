@@ -1,0 +1,875 @@
+/* ============================================================
+   NEWSROOM WORKSPACE
+   SHARED AUTHOR + EDITOR LAYOUT
+============================================================ */
+
+
+/* ============================================================
+   ROOT
+============================================================ */
+
+.workspace-layout {
+
+  --sidebar-width: 270px;
+
+  width: 100%;
+
+  min-height: 100vh;
+
+  display: flex;
+
+  position: relative;
+
+  background: #f5f7fb;
+
+  overflow-x: hidden;
+
+}
+
+
+/* ============================================================
+   SIDEBAR
+============================================================ */
+
+.workspace-sidebar {
+
+  width: var(--sidebar-width);
+
+  min-width: var(--sidebar-width);
+
+  height: 100vh;
+
+  position: sticky;
+
+  top: 0;
+
+  left: 0;
+
+  z-index: 100;
+
+  display: flex;
+
+  flex-direction: column;
+
+  background:
+    linear-gradient(
+      180deg,
+      #ffffff 0%,
+      #fafbff 100%
+    );
+
+  border-right:
+    1px solid #e6eaf2;
+
+  box-shadow:
+    8px 0 30px
+    rgba(
+      15,
+      23,
+      42,
+      0.04
+    );
+
+  overflow: hidden;
+
+  transition:
+
+    width 0.28s ease,
+
+    min-width 0.28s ease,
+
+    opacity 0.2s ease,
+
+    transform 0.28s ease;
+
+}
+
+
+/* ============================================================
+   HIDDEN SIDEBAR
+============================================================ */
+
+.workspace-layout.sidebar-hidden
+.workspace-sidebar {
+
+  width: 0;
+
+  min-width: 0;
+
+  opacity: 0;
+
+  border-right: 0;
+
+  pointer-events: none;
+
+}
+
+
+/* ============================================================
+   MAIN CONTENT
+============================================================ */
+
+.workspace-main {
+
+  flex: 1;
+
+  width: 100%;
+
+  min-width: 0;
+
+  min-height: 100vh;
+
+  padding: 32px;
+
+  padding-top: 88px;
+
+  transition:
+
+    width 0.28s ease,
+
+    margin 0.28s ease;
+
+}
+
+
+/* ============================================================
+   SIDEBAR TOGGLE
+============================================================ */
+
+.workspace-sidebar-toggle {
+
+  position: fixed;
+
+  top: 18px;
+
+  left: 18px;
+
+  width: 44px;
+
+  height: 44px;
+
+  z-index: 300;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border:
+
+    1px solid
+    rgba(
+      148,
+      163,
+      184,
+      0.25
+    );
+
+  border-radius: 12px;
+
+  background: #ffffff;
+
+  color: #334155;
+
+  cursor: pointer;
+
+  box-shadow:
+
+    0 6px 20px
+    rgba(
+      15,
+      23,
+      42,
+      0.10
+    );
+
+  transition:
+
+    transform 0.2s ease,
+
+    background 0.2s ease,
+
+    box-shadow 0.2s ease;
+
+}
+
+
+.workspace-sidebar-toggle:hover {
+
+  transform:
+    translateY(-1px);
+
+  background: #f8fafc;
+
+  box-shadow:
+
+    0 10px 25px
+    rgba(
+      15,
+      23,
+      42,
+      0.14
+    );
+
+}
+
+
+.workspace-sidebar-toggle:active {
+
+  transform:
+    scale(0.96);
+
+}
+
+
+/* ============================================================
+   BRAND
+============================================================ */
+
+.workspace-brand {
+
+  min-height: 88px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+
+  padding:
+
+    20px 22px
+    18px 74px;
+
+  border-bottom:
+
+    1px solid #edf0f5;
+
+  white-space: nowrap;
+
+}
+
+
+.workspace-brand-icon {
+
+  width: 42px;
+
+  height: 42px;
+
+  min-width: 42px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border-radius: 12px;
+
+  color: #ffffff;
+
+  box-shadow:
+
+    0 8px 18px
+    rgba(
+      37,
+      99,
+      235,
+      0.20
+    );
+
+}
+
+
+/* EDITOR COLOR */
+
+.editor-brand
+.workspace-brand-icon {
+
+  background:
+    linear-gradient(
+      135deg,
+      #2563eb,
+      #1d4ed8
+    );
+
+}
+
+
+/* AUTHOR COLOR */
+
+.author-brand
+.workspace-brand-icon {
+
+  background:
+    linear-gradient(
+      135deg,
+      #7c3aed,
+      #6841c6
+    );
+
+}
+
+
+.workspace-brand-text {
+
+  display: flex;
+
+  flex-direction: column;
+
+  min-width: 0;
+
+}
+
+
+.workspace-brand-text strong {
+
+  color: #172033;
+
+  font-size: 17px;
+
+  font-weight: 750;
+
+  line-height: 1.2;
+
+}
+
+
+.workspace-brand-text span {
+
+  margin-top: 3px;
+
+  color: #718096;
+
+  font-size: 12px;
+
+  font-weight: 500;
+
+}
+
+
+/* ============================================================
+   NAVIGATION
+============================================================ */
+
+.workspace-navigation {
+
+  flex: 1;
+
+  padding:
+
+    18px 14px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 6px;
+
+  overflow-y: auto;
+
+}
+
+
+.workspace-nav-link {
+
+  min-height: 46px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 13px;
+
+  padding:
+
+    0 14px;
+
+  border-radius: 10px;
+
+  color: #64748b;
+
+  text-decoration: none;
+
+  font-size: 14px;
+
+  font-weight: 600;
+
+  white-space: nowrap;
+
+  transition:
+
+    background 0.18s ease,
+
+    color 0.18s ease,
+
+    transform 0.18s ease;
+
+}
+
+
+.workspace-nav-link:hover {
+
+  background: #f1f5f9;
+
+  color: #334155;
+
+  transform:
+    translateX(2px);
+
+}
+
+
+.workspace-nav-link svg {
+
+  flex-shrink: 0;
+
+}
+
+
+/* ============================================================
+   EDITOR ACTIVE
+============================================================ */
+
+.editor-nav-link.active {
+
+  background:
+
+    linear-gradient(
+      90deg,
+      #eff6ff,
+      #f8fbff
+    );
+
+  color: #2563eb;
+
+}
+
+
+.editor-nav-link.active svg {
+
+  color: #2563eb;
+
+}
+
+
+/* ============================================================
+   AUTHOR ACTIVE
+============================================================ */
+
+.author-nav-link.active {
+
+  background:
+
+    linear-gradient(
+      90deg,
+      #f5f3ff,
+      #faf8ff
+    );
+
+  color: #6841c6;
+
+}
+
+
+.author-nav-link.active svg {
+
+  color: #6841c6;
+
+}
+
+
+/* ============================================================
+   SIDEBAR FOOTER
+============================================================ */
+
+.workspace-sidebar-footer {
+
+  padding: 14px;
+
+  border-top:
+
+    1px solid #edf0f5;
+
+  background: #ffffff;
+
+  white-space: nowrap;
+
+}
+
+
+.workspace-user-card {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 11px;
+
+  padding:
+
+    10px;
+
+  border-radius: 12px;
+
+  background: #f8fafc;
+
+}
+
+
+.workspace-avatar {
+
+  width: 40px;
+
+  height: 40px;
+
+  min-width: 40px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border-radius: 50%;
+
+  color: #ffffff;
+
+  font-size: 15px;
+
+  font-weight: 700;
+
+}
+
+
+/* EDITOR AVATAR */
+
+.editor-avatar {
+
+  background:
+
+    linear-gradient(
+      135deg,
+      #2563eb,
+      #1d4ed8
+    );
+
+}
+
+
+/* AUTHOR AVATAR */
+
+.author-avatar {
+
+  background:
+
+    linear-gradient(
+      135deg,
+      #7c3aed,
+      #6841c6
+    );
+
+}
+
+
+.workspace-user-details {
+
+  min-width: 0;
+
+  display: flex;
+
+  flex-direction: column;
+
+}
+
+
+.workspace-user-details strong {
+
+  color: #1e293b;
+
+  font-size: 13px;
+
+  font-weight: 700;
+
+  white-space: nowrap;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+
+}
+
+
+.workspace-user-details span {
+
+  margin-top: 3px;
+
+  color: #94a3b8;
+
+  font-size: 12px;
+
+}
+
+
+.workspace-logout {
+
+  width: 100%;
+
+  min-height: 42px;
+
+  margin-top: 10px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 9px;
+
+  border:
+
+    1px solid #e2e8f0;
+
+  border-radius: 10px;
+
+  background: #ffffff;
+
+  color: #64748b;
+
+  font-size: 13px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+
+    background 0.2s ease,
+
+    border-color 0.2s ease,
+
+    color 0.2s ease;
+
+}
+
+
+.workspace-logout:hover {
+
+  background: #fff5f5;
+
+  border-color: #fecaca;
+
+  color: #dc2626;
+
+}
+
+
+/* ============================================================
+   MOBILE OVERLAY
+============================================================ */
+
+.workspace-sidebar-overlay {
+
+  display: none;
+
+}
+
+
+/* ============================================================
+   TABLET
+============================================================ */
+
+@media (
+  max-width: 1024px
+) {
+
+  .workspace-main {
+
+    padding: 24px;
+
+    padding-top: 82px;
+
+  }
+
+}
+
+
+/* ============================================================
+   MOBILE
+============================================================ */
+
+@media (
+  max-width: 768px
+) {
+
+
+  .workspace-layout {
+
+    display: block;
+
+  }
+
+
+  .workspace-sidebar {
+
+    position: fixed;
+
+    top: 0;
+
+    left: 0;
+
+    width: 270px;
+
+    min-width: 270px;
+
+    height: 100vh;
+
+    transform:
+      translateX(-100%);
+
+    opacity: 1;
+
+    z-index: 500;
+
+    box-shadow:
+
+      12px 0 40px
+      rgba(
+        15,
+        23,
+        42,
+        0.18
+      );
+
+  }
+
+
+  .workspace-layout.sidebar-visible
+  .workspace-sidebar {
+
+    transform:
+      translateX(0);
+
+  }
+
+
+  .workspace-layout.sidebar-hidden
+  .workspace-sidebar {
+
+    width: 270px;
+
+    min-width: 270px;
+
+    opacity: 1;
+
+    transform:
+      translateX(-100%);
+
+  }
+
+
+  .workspace-main {
+
+    width: 100%;
+
+    min-height: 100vh;
+
+    padding: 18px;
+
+    padding-top: 78px;
+
+  }
+
+
+  .workspace-sidebar-toggle {
+
+    top: 14px;
+
+    left: 14px;
+
+    width: 42px;
+
+    height: 42px;
+
+    z-index: 600;
+
+  }
+
+
+  .workspace-sidebar-overlay {
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 400;
+
+    display: block;
+
+    border: 0;
+
+    background:
+
+      rgba(
+        15,
+        23,
+        42,
+        0.40
+      );
+
+    cursor: default;
+
+  }
+
+
+}
+
+
+@media (
+  max-width: 480px
+) {
+
+
+  .workspace-main {
+
+    padding: 14px;
+
+    padding-top: 74px;
+
+  }
+
+
+  .workspace-sidebar {
+
+    width: min(
+      86vw,
+      300px
+    );
+
+    min-width: min(
+      86vw,
+      300px
+    );
+
+  }
+
+
+  .workspace-layout.sidebar-hidden
+  .workspace-sidebar {
+
+    width: min(
+      86vw,
+      300px
+    );
+
+    min-width: min(
+      86vw,
+      300px
+    );
+
+  }
+
+
+}

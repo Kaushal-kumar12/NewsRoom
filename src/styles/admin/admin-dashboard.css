@@ -1,0 +1,63 @@
+/* src/styles/admin/admin-dashboard.css */
+
+.staff-dashboard-grid {
+  align-items: start;
+}
+
+.staff-action-card {
+  min-height: 115px;
+}
+
+.staff-stat-card {
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.staff-stat-card:hover {
+  transform: translateY(-3px);
+
+  box-shadow:
+    0 12px 28px rgba(30, 50, 80, 0.08);
+}
+
+/*
+|--------------------------------------------------------------------------
+| ROLE STAT CARD ACCENTS
+|--------------------------------------------------------------------------
+*/
+
+.staff-role-administrator .staff-stat-card {
+  border-top: 3px solid #3973ff;
+}
+
+.staff-role-editor .staff-stat-card {
+  border-top: 3px solid #7956e8;
+}
+
+.staff-role-author .staff-stat-card {
+  border-top: 3px solid #18a56a;
+}
+
+/*
+|--------------------------------------------------------------------------
+| RESPONSIVE
+|--------------------------------------------------------------------------
+*/
+
+@media (max-width: 900px) {
+  .staff-dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .staff-action-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 650px) {
+  .staff-dashboard-grid,
+  .staff-two-column {
+    grid-template-columns: 1fr;
+  }
+}

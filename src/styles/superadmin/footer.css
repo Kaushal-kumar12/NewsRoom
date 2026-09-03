@@ -1,0 +1,86 @@
+/* ============================================================
+   SUPER ADMIN FOOTER
+   ============================================================ */
+
+.sa-footer {
+  min-height: 64px;
+
+  padding: 0 28px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  box-sizing: border-box;
+
+  background: #ffffff;
+
+  border-top: 1px solid #e2e8f0;
+
+  color: #64748b;
+
+  font-size: 12px;
+
+  flex-shrink: 0;
+}
+
+.sa-footer-left,
+.sa-footer-right {
+  display: flex;
+  align-items: center;
+
+  gap: 8px;
+}
+
+.sa-footer-left strong {
+  color: #475569;
+
+  font-weight: 600;
+}
+
+.sa-footer-right {
+  color: #94a3b8;
+}
+
+.sa-footer-separator {
+  color: #cbd5e1;
+}
+
+.sa-footer-link {
+  color: #64748b;
+
+  text-decoration: none;
+
+  transition:
+    color 0.2s ease;
+}
+
+.sa-footer-link:hover {
+  color: #2563eb;
+}
+
+
+@media (max-width: 700px) {
+
+  .sa-footer {
+    min-height: auto;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+    gap: 6px;
+
+    padding: 14px;
+
+    text-align: center;
+  }
+
+  .sa-footer-left,
+  .sa-footer-right {
+    flex-wrap: wrap;
+
+    justify-content: center;
+  }
+
+}

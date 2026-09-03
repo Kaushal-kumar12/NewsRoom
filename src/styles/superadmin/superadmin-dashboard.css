@@ -1,0 +1,576 @@
+/* =========================================================
+   SUPER ADMIN DASHBOARD
+   ========================================================= */
+
+.sa-dashboard {
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.sa-dashboard-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 24px;
+
+  margin-bottom: 28px;
+}
+
+.sa-dashboard-eyebrow {
+  margin-bottom: 8px;
+
+  font-size: 11px;
+  font-weight: 700;
+
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+
+  color: #2563eb;
+}
+
+.sa-dashboard-header h2 {
+  margin: 0;
+
+  font-size: 30px;
+  line-height: 1.2;
+  font-weight: 750;
+
+  color: #0f172a;
+}
+
+.sa-dashboard-header p {
+  margin: 9px 0 0;
+
+  max-width: 680px;
+
+  font-size: 14px;
+  line-height: 1.6;
+
+  color: #64748b;
+}
+
+.sa-refresh-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 8px;
+
+  min-height: 40px;
+
+  padding: 0 15px;
+
+  border: 1px solid #dbe3ee;
+  border-radius: 9px;
+
+  background: #ffffff;
+  color: #334155;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: all 0.15s ease;
+}
+
+.sa-refresh-button:hover {
+  border-color: #bfdbfe;
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+/* =========================================================
+   STATISTICS
+   ========================================================= */
+
+.sa-statistics {
+  display: grid;
+
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+
+  gap: 16px;
+
+  margin-bottom: 24px;
+}
+
+.sa-stat-card {
+  min-height: 150px;
+
+  padding: 18px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+
+  background: #ffffff;
+
+  box-sizing: border-box;
+
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.sa-stat-card:hover {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 8px 24px rgba(15, 23, 42, 0.06);
+}
+
+.sa-stat-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sa-stat-icon {
+  width: 38px;
+  height: 38px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 10px;
+
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.sa-stat-arrow {
+  color: #94a3b8;
+}
+
+.sa-stat-value {
+  margin-top: 19px;
+
+  font-size: 26px;
+  line-height: 1;
+
+  font-weight: 750;
+
+  color: #0f172a;
+}
+
+.sa-stat-title {
+  margin-top: 8px;
+
+  font-size: 13px;
+  font-weight: 500;
+
+  color: #64748b;
+}
+
+/* Stat variants */
+
+.sa-stat-admins .sa-stat-icon {
+  background: #f0fdf4;
+  color: #16a34a;
+}
+
+.sa-stat-super-admins .sa-stat-icon {
+  background: #f5f3ff;
+  color: #7c3aed;
+}
+
+.sa-stat-authors .sa-stat-icon {
+  background: #fff7ed;
+  color: #ea580c;
+}
+
+.sa-stat-editors .sa-stat-icon {
+  background: #fdf2f8;
+  color: #db2777;
+}
+
+.sa-stat-active .sa-stat-icon {
+  background: #ecfdf5;
+  color: #059669;
+}
+
+.sa-stat-disabled .sa-stat-icon {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.sa-stat-queue .sa-stat-icon {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+/* =========================================================
+   DASHBOARD GRID
+   ========================================================= */
+
+.sa-dashboard-grid {
+  display: grid;
+
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  gap: 20px;
+
+  margin-bottom: 20px;
+}
+
+/* =========================================================
+   CARDS
+   ========================================================= */
+
+.sa-dashboard-card {
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+
+  background: #ffffff;
+
+  overflow: hidden;
+}
+
+.sa-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 16px;
+
+  padding: 20px;
+
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.sa-card-header h3 {
+  margin: 0;
+
+  font-size: 15px;
+  font-weight: 700;
+
+  color: #0f172a;
+}
+
+.sa-card-header p {
+  margin: 5px 0 0;
+
+  font-size: 12px;
+
+  color: #64748b;
+}
+
+.sa-card-header-icon {
+  width: 36px;
+  height: 36px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 9px;
+
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.sa-card-header-icon.security {
+  background: #f5f3ff;
+  color: #7c3aed;
+}
+
+/* =========================================================
+   SYSTEM OVERVIEW
+   ========================================================= */
+
+.sa-overview-list {
+  padding: 8px 20px 14px;
+}
+
+.sa-overview-row {
+  min-height: 48px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  border-bottom: 1px solid #f1f5f9;
+
+  font-size: 13px;
+}
+
+.sa-overview-row:last-child {
+  border-bottom: 0;
+}
+
+.sa-overview-row span {
+  color: #64748b;
+}
+
+.sa-overview-row strong {
+  color: #0f172a;
+  font-weight: 700;
+}
+
+/* =========================================================
+   SECURITY
+   ========================================================= */
+
+.sa-security-list {
+  padding: 8px 20px 14px;
+}
+
+.sa-security-item {
+  min-height: 58px;
+
+  display: grid;
+
+  grid-template-columns: 22px minmax(0, 1fr) auto;
+
+  align-items: center;
+
+  gap: 10px;
+
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.sa-security-item:last-child {
+  border-bottom: 0;
+}
+
+.sa-security-item > svg {
+  color: #16a34a;
+}
+
+.sa-security-item strong {
+  display: block;
+
+  font-size: 13px;
+  color: #0f172a;
+}
+
+.sa-security-item span {
+  display: block;
+
+  margin-top: 3px;
+
+  font-size: 11px;
+  color: #64748b;
+}
+
+.sa-security-item b {
+  font-size: 11px;
+  font-weight: 700;
+
+  color: #16a34a;
+}
+
+/* =========================================================
+   QUICK ACCESS
+   ========================================================= */
+
+.sa-quick-access {
+  margin-bottom: 20px;
+}
+
+.sa-quick-grid {
+  display: grid;
+
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+
+  gap: 12px;
+
+  padding: 18px;
+}
+
+.sa-quick-item {
+  min-height: 72px;
+
+  display: grid;
+
+  grid-template-columns: 40px minmax(0, 1fr) 18px;
+
+  align-items: center;
+
+  gap: 10px;
+
+  padding: 12px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 11px;
+
+  background: #ffffff;
+  color: inherit;
+
+  text-decoration: none;
+
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease,
+    transform 0.15s ease;
+}
+
+.sa-quick-item:hover {
+  border-color: #bfdbfe;
+  background: #f8fbff;
+
+  transform: translateY(-1px);
+}
+
+.sa-quick-icon {
+  width: 40px;
+  height: 40px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 10px;
+
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.sa-quick-text {
+  min-width: 0;
+}
+
+.sa-quick-text strong {
+  display: block;
+
+  font-size: 13px;
+  font-weight: 650;
+
+  color: #0f172a;
+}
+
+.sa-quick-text span {
+  display: block;
+
+  margin-top: 4px;
+
+  font-size: 11px;
+
+  color: #64748b;
+}
+
+.sa-quick-item > svg {
+  color: #94a3b8;
+}
+
+/* =========================================================
+   RECENT ACTIVITY
+   ========================================================= */
+
+.sa-activity-card {
+  margin-bottom: 20px;
+}
+
+.sa-empty-activity {
+  min-height: 180px;
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  padding: 30px;
+
+  text-align: center;
+}
+
+.sa-empty-icon {
+  width: 46px;
+  height: 46px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-bottom: 12px;
+
+  border-radius: 12px;
+
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+.sa-empty-activity strong {
+  font-size: 13px;
+  color: #334155;
+}
+
+.sa-empty-activity span {
+  max-width: 360px;
+
+  margin-top: 5px;
+
+  font-size: 12px;
+  line-height: 1.5;
+
+  color: #94a3b8;
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 1200px) {
+
+  .sa-statistics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .sa-quick-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+
+@media (max-width: 800px) {
+
+  .sa-dashboard-header {
+    flex-direction: column;
+  }
+
+  .sa-dashboard-header h2 {
+    font-size: 25px;
+  }
+
+  .sa-dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .sa-quick-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+@media (max-width: 560px) {
+
+  .sa-statistics {
+    grid-template-columns: 1fr;
+  }
+
+  .sa-stat-card {
+    min-height: 135px;
+  }
+
+  .sa-card-header {
+    padding: 16px;
+  }
+
+  .sa-overview-list,
+  .sa-security-list {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .sa-quick-grid {
+    padding: 14px;
+  }
+
+}
