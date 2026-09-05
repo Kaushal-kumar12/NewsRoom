@@ -1,3 +1,5 @@
+// src/pages/auth/Register.jsx
+
 import React, {
   useEffect,
   useRef,
@@ -20,12 +22,12 @@ import {
   ArrowRight,
   ShieldCheck,
   RefreshCw,
+  Smartphone,
 } from "lucide-react";
 
 import {
-  PhoneAuthProvider,
   RecaptchaVerifier,
-  linkWithCredential,
+  signInWithPhoneNumber,
 } from "firebase/auth";
 
 import {
@@ -38,22 +40,34 @@ import {
 
 import "../../styles/auth.css";
 
+
+/* ============================================================
+   PHONE NORMALIZATION
+============================================================ */
+
 function normalizePhone(
   value
 ) {
+
   const raw =
-    String(value || "")
-      .trim();
+    String(
+      value || ""
+    ).trim();
+
 
   if (!raw) {
     return "";
   }
 
+
   if (
     raw.startsWith("+")
   ) {
+
     return raw;
+
   }
+
 
   const digits =
     raw.replace(
@@ -61,980 +75,1969 @@ function normalizePhone(
       ""
     );
 
+
   /*
-  |--------------------------------------------------------------------------
-  | India-friendly phone number
-  |--------------------------------------------------------------------------
+  |------------------------------------------------------------
+  | INDIA DEFAULT
+  |
+  | 9876543210
+  |
+  | becomes
+  |
+  | +919876543210
+  |------------------------------------------------------------
   */
 
   if (
     digits.length === 10
   ) {
+
     return `+91${digits}`;
+
   }
 
+
   return `+${digits}`;
+
 }
 
+
+/* ============================================================
+   COMPONENT
+============================================================ */
+
 export default function RegisterPage() {
+
   const navigate =
     useNavigate();
 
+
   const {
+
     register,
-    markPhoneRegistrationVerified,
+
+    completePhoneRegistration,
+
+    logout,
+
     loading,
+
   } = useAuth();
+
+
+  /* ==========================================================
+     REGISTRATION METHOD
+  ========================================================== */
+
+  const [
+
+    registrationMethod,
+
+    setRegistrationMethod,
+
+  ] =
+    useState(
+      "email"
+    );
+
+
+  /* ==========================================================
+     FORM
+  ========================================================== */
+
+  const [
+
+    form,
+
+    setForm,
+
+  ] =
+    useState({
+
+      name: "",
+
+      email: "",
+
+      phoneNumber: "",
+
+      password: "",
+
+      confirmPassword: "",
+
+      acceptTerms: false,
+
+    });
+
+
+  /* ==========================================================
+     OTP
+  ========================================================== */
+
+  const [
+
+    otp,
+
+    setOtp,
+
+  ] =
+    useState("");
+
+
+  const [
+
+    otpMode,
+
+    setOtpMode,
+
+  ] =
+    useState(false);
+
+
+  const confirmationResultRef =
+    useRef(null);
+
 
   const recaptchaRef =
     useRef(null);
 
-  const verificationIdRef =
-    useRef("");
 
-  const [form, setForm] =
-    useState({
-      name: "",
-      email: "",
-      phoneNumber: "",
-      password: "",
-      confirmPassword: "",
-      acceptTerms: false,
-    });
-
-  const [otp, setOtp] =
-    useState("");
-
-  const [otpMode, setOtpMode] =
-    useState(false);
-
-  const [otpLoading, setOtpLoading] =
-    useState(false);
+  /* ==========================================================
+     UI STATES
+  ========================================================== */
 
   const [
+
+    submitting,
+
+    setSubmitting,
+
+  ] =
+    useState(false);
+
+
+  const [
+
+    otpLoading,
+
+    setOtpLoading,
+
+  ] =
+    useState(false);
+
+
+  const [
+
     showPassword,
+
     setShowPassword,
-  ] = useState(false);
+
+  ] =
+    useState(false);
+
 
   const [
+
     showConfirmPassword,
+
     setShowConfirmPassword,
-  ] = useState(false);
 
-  const [error, setError] =
+  ] =
+    useState(false);
+
+
+  const [
+
+    error,
+
+    setError,
+
+  ] =
     useState("");
 
-  const [message, setMessage] =
+
+  const [
+
+    message,
+
+    setMessage,
+
+  ] =
     useState("");
 
-  /*
-  |--------------------------------------------------------------------------
-  | Cleanup reCAPTCHA
-  |--------------------------------------------------------------------------
-  */
+
+  /* ==========================================================
+     CLEANUP
+  ========================================================== */
 
   useEffect(() => {
+
     return () => {
+
       try {
+
         recaptchaRef.current?.clear();
+
       } catch {
+
         // Ignore cleanup errors.
+
       }
+
     };
+
   }, []);
 
-  /*
-  |--------------------------------------------------------------------------
-  | Update form
-  |--------------------------------------------------------------------------
-  */
 
-  const update = (
+  /* ==========================================================
+     UPDATE FIELD
+  ========================================================== */
+
+  function update(
     field,
     value
-  ) => {
+  ) {
+
     setForm(
       (current) => ({
+
         ...current,
-        [field]: value,
+
+        [field]:
+          value,
+
       })
     );
-  };
 
-  /*
-  |--------------------------------------------------------------------------
-  | Create reCAPTCHA
-  |--------------------------------------------------------------------------
-  */
+  }
 
-  const createRecaptcha =
-    () => {
-      if (
-        recaptchaRef.current
-      ) {
-        return recaptchaRef.current;
-      }
 
-      recaptchaRef.current =
-        new RecaptchaVerifier(
-          auth,
-          "registration-recaptcha",
-          {
-            size: "invisible",
-          }
-        );
+  /* ==========================================================
+     CHANGE REGISTRATION METHOD
+  ========================================================== */
+
+  function changeMethod(
+    method
+  ) {
+
+    setRegistrationMethod(
+      method
+    );
+
+
+    setOtpMode(false);
+
+    setOtp("");
+
+    setError("");
+
+    setMessage("");
+
+    confirmationResultRef.current =
+      null;
+
+  }
+
+
+  /* ==========================================================
+     CREATE RECAPTCHA
+  ========================================================== */
+
+  function createRecaptcha() {
+
+    if (
+      recaptchaRef.current
+    ) {
 
       return recaptchaRef.current;
-    };
 
-  /*
-  |--------------------------------------------------------------------------
-  | SEND PHONE OTP
-  |--------------------------------------------------------------------------
-  */
+    }
 
-  const sendPhoneOtp =
-    async (
-      phoneNumber
-    ) => {
-      const verifier =
-        createRecaptcha();
 
-      const provider =
-        new PhoneAuthProvider(
-          auth
-        );
+    recaptchaRef.current =
+      new RecaptchaVerifier(
 
-      const verificationId =
-        await provider.verifyPhoneNumber(
-          {
-            phoneNumber,
-          },
-          verifier
-        );
+        auth,
 
-      verificationIdRef.current =
-        verificationId;
+        "registration-recaptcha",
 
-      setOtpMode(true);
+        {
 
-      setMessage(
-        `A verification code was sent to ${phoneNumber}.`
+          size:
+            "invisible",
+
+        }
+
       );
-    };
 
-  /*
-  |--------------------------------------------------------------------------
-  | REGISTRATION
-  |--------------------------------------------------------------------------
-  */
 
-  const submit =
-    async (event) => {
-      event.preventDefault();
+    return recaptchaRef.current;
 
-      setError("");
-      setMessage("");
+  }
+
+
+  /* ==========================================================
+     RESET RECAPTCHA
+  ========================================================== */
+
+  function resetRecaptcha() {
+
+    try {
+
+      recaptchaRef.current?.clear();
+
+    } catch {
+
+      // Ignore.
+
+    }
+
+
+    recaptchaRef.current =
+      null;
+
+  }
+
+
+  /* ==========================================================
+     VALIDATE COMMON DATA
+  ========================================================== */
+
+  function validateCommonData() {
+
+    const name =
+      form.name.trim();
+
+
+    if (
+      !name ||
+      name.length < 2
+    ) {
+
+      throw new Error(
+        "Please enter your full name."
+      );
+
+    }
+
+
+    if (
+      !form.acceptTerms
+    ) {
+
+      throw new Error(
+        "Please accept the Terms and Privacy Policy."
+      );
+
+    }
+
+
+    return name;
+
+  }
+
+
+  /* ==========================================================
+     EMAIL REGISTRATION
+  ========================================================== */
+
+  async function submitEmailRegistration(
+    event
+  ) {
+
+    event.preventDefault();
+
+
+    setError("");
+
+    setMessage("");
+
+
+    try {
+
+      setSubmitting(true);
+
 
       const name =
-        form.name.trim();
+        validateCommonData();
+
 
       const email =
         form.email
           .trim()
           .toLowerCase();
 
-      const phoneNumber =
-        normalizePhone(
-          form.phoneNumber
-        );
-
-      /*
-      |--------------------------------------------------------------------------
-      | VALIDATION
-      |--------------------------------------------------------------------------
-      */
-
-      if (
-        !name ||
-        name.length < 2
-      ) {
-        setError(
-          "Please enter your full name."
-        );
-
-        return;
-      }
 
       if (!email) {
-        setError(
+
+        throw new Error(
           "Please enter your email address."
         );
 
-        return;
       }
 
-      if (
-        form.phoneNumber.trim() &&
-        !/^\+\d{8,15}$/.test(
-          phoneNumber
-        )
-      ) {
-        setError(
-          "Please enter a valid mobile number with country code, for example +919876543210."
-        );
-
-        return;
-      }
 
       if (
         form.password.length < 6
       ) {
-        setError(
+
+        throw new Error(
           "Password must contain at least 6 characters."
         );
 
-        return;
       }
+
 
       if (
         form.password !==
         form.confirmPassword
       ) {
-        setError(
+
+        throw new Error(
           "Passwords do not match."
         );
 
-        return;
       }
 
-      if (
-        !form.acceptTerms
-      ) {
-        setError(
-          "Please accept the Terms and Privacy Policy."
-        );
 
-        return;
-      }
+      await register({
 
-      try {
-        const createdUser =
-          await register({
-            name,
+        name,
+
+        email,
+
+        password:
+          form.password,
+
+      });
+
+
+      navigate(
+
+        "/verify-email",
+
+        {
+
+          replace:
+            true,
+
+          state: {
+
             email,
-            password:
-              form.password,
-            phoneNumber,
-          });
 
-        /*
-        |--------------------------------------------------------------------------
-        | EMAIL + PHONE
-        |--------------------------------------------------------------------------
-        |
-        | Phone OTP is the activation method.
-        |
-        */
+          },
 
-        if (
-          createdUser.requiresPhoneVerification
-        ) {
-          setOtpLoading(true);
-
-          try {
-            await sendPhoneOtp(
-              phoneNumber
-            );
-          } finally {
-            setOtpLoading(
-              false
-            );
-          }
-
-          return;
         }
 
-        /*
-        |--------------------------------------------------------------------------
-        | EMAIL ONLY
-        |--------------------------------------------------------------------------
-        */
+      );
 
-        navigate(
-          "/verify-email",
-          {
-            replace: true,
+    } catch (
+      err
+    ) {
 
-            state: {
-              email,
-            },
-          }
-        );
-      } catch (err) {
-        console.error(
-          "Registration failed:",
-          err
-        );
+      console.error(
+        "Email registration failed:",
+        err
+      );
 
-        let friendly =
-          err?.message ||
-          "Unable to create your account. Please try again.";
 
-        switch (
-          err?.code
-        ) {
-          case "auth/email-already-in-use":
-            friendly =
-              "An account with this email already exists. Please sign in instead.";
-            break;
+      let friendlyMessage =
+        err?.message ||
+        "Unable to create your account.";
 
-          case "auth/invalid-email":
-            friendly =
-              "Please enter a valid email address.";
-            break;
 
-          case "auth/weak-password":
-            friendly =
-              "Your password is too weak. Please use at least 6 characters.";
-            break;
+      switch (
+        err?.code
+      ) {
 
-          case "auth/network-request-failed":
-            friendly =
-              "Network error. Please check your internet connection and try again.";
-            break;
+        case "auth/email-already-in-use":
 
-          default:
-            break;
-        }
+          friendlyMessage =
+            "An account with this email already exists.";
 
-        setError(
-          friendly
-        );
+          break;
+
+
+        case "auth/invalid-email":
+
+          friendlyMessage =
+            "Please enter a valid email address.";
+
+          break;
+
+
+        case "auth/weak-password":
+
+          friendlyMessage =
+            "Password must contain at least 6 characters.";
+
+          break;
+
+
+        case "auth/network-request-failed":
+
+          friendlyMessage =
+            "Network error. Please check your internet connection.";
+
+          break;
+
+
+        default:
+
+          break;
+
       }
-    };
 
-  /*
-  |--------------------------------------------------------------------------
-  | VERIFY OTP
-  |--------------------------------------------------------------------------
-  */
 
-  const verifyOtp =
-    async () => {
-      setError("");
-      setMessage("");
+      setError(
+        friendlyMessage
+      );
+
+    } finally {
+
+      setSubmitting(
+        false
+      );
+
+    }
+
+  }
+
+
+  /* ==========================================================
+     SEND MOBILE OTP
+  ========================================================== */
+
+  async function sendMobileOtp(
+    event
+  ) {
+
+    event.preventDefault();
+
+
+    setError("");
+
+    setMessage("");
+
+
+    try {
+
+      setSubmitting(true);
+
+
+      validateCommonData();
+
+
+      const phoneNumber =
+        normalizePhone(
+          form.phoneNumber
+        );
+
 
       if (
-        !/^\d{6}$/.test(
-          otp.trim()
+        !phoneNumber ||
+        !/^\+\d{8,15}$/.test(
+          phoneNumber
         )
       ) {
-        setError(
-          "Please enter the 6-digit OTP."
+
+        throw new Error(
+          "Please enter a valid mobile number."
         );
 
-        return;
       }
 
-      if (
-        !verificationIdRef.current
+
+      resetRecaptcha();
+
+
+      const verifier =
+        createRecaptcha();
+
+
+      const confirmationResult =
+        await signInWithPhoneNumber(
+
+          auth,
+
+          phoneNumber,
+
+          verifier
+
+        );
+
+
+      confirmationResultRef.current =
+        confirmationResult;
+
+
+      setOtpMode(
+        true
+      );
+
+
+      setMessage(
+        `A 6-digit OTP has been sent to ${phoneNumber}.`
+      );
+
+    } catch (
+      err
+    ) {
+
+      console.error(
+        "OTP sending failed:",
+        err
+      );
+
+
+      let friendlyMessage =
+        err?.message ||
+        "Unable to send OTP.";
+
+
+      switch (
+        err?.code
       ) {
-        setError(
-          "The OTP session has expired. Please start registration again."
-        );
 
-        return;
+        case "auth/invalid-phone-number":
+
+          friendlyMessage =
+            "Please enter a valid mobile number.";
+
+          break;
+
+
+        case "auth/too-many-requests":
+
+          friendlyMessage =
+            "Too many OTP requests. Please try again later.";
+
+          break;
+
+
+        case "auth/quota-exceeded":
+
+          friendlyMessage =
+            "SMS quota has been exceeded. Please try again later.";
+
+          break;
+
+
+        case "auth/network-request-failed":
+
+          friendlyMessage =
+            "Network error. Please check your internet connection.";
+
+          break;
+
+
+        default:
+
+          break;
+
       }
 
-      if (
-        !auth.currentUser
+
+      setError(
+        friendlyMessage
+      );
+
+
+      resetRecaptcha();
+
+    } finally {
+
+      setSubmitting(
+        false
+      );
+
+    }
+
+  }
+
+
+  /* ==========================================================
+     VERIFY REGISTRATION OTP
+  ========================================================== */
+
+  async function verifyMobileOtp() {
+
+    setError("");
+
+    setMessage("");
+
+
+    if (
+      !/^\d{6}$/.test(
+        otp.trim()
+      )
+    ) {
+
+      setError(
+        "Please enter the 6-digit OTP."
+      );
+
+      return;
+
+    }
+
+
+    if (
+      !confirmationResultRef.current
+    ) {
+
+      setError(
+        "OTP session has expired. Please send OTP again."
+      );
+
+      return;
+
+    }
+
+
+    try {
+
+      setOtpLoading(
+        true
+      );
+
+
+      /*
+      |--------------------------------------------------------
+      | VERIFY OTP
+      |
+      | Firebase creates/signs in the phone account.
+      |--------------------------------------------------------
+      */
+
+      const credential =
+        await confirmationResultRef.current.confirm(
+          otp.trim()
+        );
+
+
+      const firebaseAccount =
+        credential.user;
+
+
+      const name =
+        form.name.trim();
+
+
+      const phoneNumber =
+        normalizePhone(
+          form.phoneNumber
+        );
+
+
+      /*
+      |--------------------------------------------------------
+      | CREATE NEWSROOM PROFILE
+      |--------------------------------------------------------
+      */
+
+      await completePhoneRegistration({
+
+        firebaseAccount,
+
+        name,
+
+        phoneNumber,
+
+      });
+
+
+      setMessage(
+        "Your mobile number has been verified. Your account is now active."
+      );
+
+
+      setTimeout(
+
+        () => {
+
+          navigate(
+
+            "/",
+
+            {
+
+              replace:
+                true,
+
+            }
+
+          );
+
+        },
+
+        1000
+
+      );
+
+    } catch (
+      err
+    ) {
+
+      console.error(
+        "OTP verification failed:",
+        err
+      );
+
+
+      let friendlyMessage =
+        err?.message ||
+        "Invalid or expired OTP.";
+
+
+      switch (
+        err?.code
       ) {
-        setError(
-          "Your registration session has expired. Please start again."
-        );
 
-        return;
+        case "auth/invalid-verification-code":
+
+          friendlyMessage =
+            "The OTP is incorrect.";
+
+          break;
+
+
+        case "auth/code-expired":
+
+          friendlyMessage =
+            "OTP has expired. Please request a new OTP.";
+
+          break;
+
+
+        default:
+
+          break;
+
       }
 
-      setOtpLoading(true);
+
+      setError(
+        friendlyMessage
+      );
+
+
+      /*
+      |--------------------------------------------------------
+      | CLEANUP
+      |--------------------------------------------------------
+      */
 
       try {
-        const credential =
-          PhoneAuthProvider.credential(
-            verificationIdRef.current,
-            otp.trim()
-          );
 
-        /*
-        |--------------------------------------------------------------------------
-        | LINK VERIFIED PHONE TO SAME ACCOUNT
-        |--------------------------------------------------------------------------
-        */
+        await logout();
 
-        await linkWithCredential(
-          auth.currentUser,
-          credential
-        );
+      } catch {
 
-        await markPhoneRegistrationVerified(
-          normalizePhone(
-            form.phoneNumber
-          )
-        );
+        // Ignore.
 
-        setMessage(
-          "Mobile number verified. Your account is now active."
-        );
-
-        setTimeout(
-          () => {
-            navigate(
-              "/",
-              {
-                replace: true,
-              }
-            );
-          },
-          700
-        );
-      } catch (err) {
-        console.error(
-          "Phone verification failed:",
-          err
-        );
-
-        if (
-          err?.code ===
-          "auth/credential-already-in-use"
-        ) {
-          setError(
-            "This mobile number is already linked to another account."
-          );
-        } else {
-          setError(
-            err?.message ||
-              "Invalid or expired OTP. Please try again."
-          );
-        }
-      } finally {
-        setOtpLoading(
-          false
-        );
       }
-    };
 
-  /*
-  |--------------------------------------------------------------------------
-  | RESEND OTP
-  |--------------------------------------------------------------------------
-  */
+    } finally {
 
-  const resendOtp =
-    async () => {
-      setError("");
-      setMessage("");
-      setOtpLoading(true);
+      setOtpLoading(
+        false
+      );
 
-      try {
-        await sendPhoneOtp(
-          normalizePhone(
-            form.phoneNumber
-          )
+    }
+
+  }
+
+
+  /* ==========================================================
+     RESEND OTP
+  ========================================================== */
+
+  async function resendOtp() {
+
+    setError("");
+
+    setMessage("");
+
+
+    try {
+
+      setOtpLoading(
+        true
+      );
+
+
+      const phoneNumber =
+        normalizePhone(
+          form.phoneNumber
         );
-      } catch (err) {
-        setError(
-          err?.message ||
-            "Unable to resend the OTP."
+
+
+      resetRecaptcha();
+
+
+      const verifier =
+        createRecaptcha();
+
+
+      const confirmationResult =
+        await signInWithPhoneNumber(
+
+          auth,
+
+          phoneNumber,
+
+          verifier
+
         );
-      } finally {
-        setOtpLoading(
-          false
-        );
-      }
-    };
+
+
+      confirmationResultRef.current =
+        confirmationResult;
+
+
+      setOtp("");
+
+      setMessage(
+        "A new OTP has been sent to your mobile number."
+      );
+
+    } catch (
+      err
+    ) {
+
+      setError(
+
+        err?.message ||
+        "Unable to resend OTP."
+
+      );
+
+    } finally {
+
+      setOtpLoading(
+        false
+      );
+
+    }
+
+  }
+
+
+  /* ==========================================================
+     BACK TO MOBILE FORM
+  ========================================================== */
+
+  function backToPhoneForm() {
+
+    setOtpMode(
+      false
+    );
+
+
+    setOtp("");
+
+    setError("");
+
+    setMessage("");
+
+    confirmationResultRef.current =
+      null;
+
+
+    resetRecaptcha();
+
+  }
+
+
+  /* ==========================================================
+     RENDER
+  ========================================================== */
 
   return (
+
     <main className="auth-page">
+
       <section className="auth-card auth-card-wide">
 
+
+        {/* ====================================================
+            BRAND
+        ==================================================== */}
+
         <div className="auth-brand">
+
           <div className="auth-brand-mark">
             N
           </div>
 
+
           <div>
+
             <strong>
               NewsRoom
             </strong>
 
+
             <span>
               Trusted news. Clear perspective.
             </span>
+
           </div>
+
         </div>
 
+
+        {/* ====================================================
+            HEADING
+        ==================================================== */}
+
         <div className="auth-heading">
+
           <p className="eyebrow">
             Join NewsRoom
           </p>
+
 
           <h1>
             Create your account
           </h1>
 
+
           <p>
-            Register as a normal NewsRoom user.
-            Editorial and administrative roles
-            are assigned separately.
+
+            Choose email or mobile number
+            to create your NewsRoom account.
+
           </p>
+
         </div>
 
+
+        {/* ====================================================
+            METHOD SELECTOR
+        ==================================================== */}
+
+        {!otpMode && (
+
+          <div
+            className="auth-method-selector"
+            style={{
+              display:
+                "grid",
+
+              gridTemplateColumns:
+                "1fr 1fr",
+
+              gap:
+                "10px",
+
+              marginBottom:
+                "24px",
+            }}
+          >
+
+            <button
+
+              type="button"
+
+              onClick={() =>
+                changeMethod(
+                  "email"
+                )
+              }
+
+              className={
+                registrationMethod ===
+                "email"
+
+                  ? "auth-secondary"
+
+                  : "auth-method-button"
+              }
+
+            >
+
+              <Mail
+                size={18}
+              />
+
+              Email
+
+            </button>
+
+
+            <button
+
+              type="button"
+
+              onClick={() =>
+                changeMethod(
+                  "phone"
+                )
+              }
+
+              className={
+                registrationMethod ===
+                "phone"
+
+                  ? "auth-secondary"
+
+                  : "auth-method-button"
+              }
+
+            >
+
+              <Smartphone
+                size={18}
+              />
+
+              Mobile
+
+            </button>
+
+          </div>
+
+        )}
+
+
+        {/* ====================================================
+            ERROR
+        ==================================================== */}
+
         {error && (
+
           <div
             className="auth-error"
             role="alert"
           >
+
             {error}
+
           </div>
+
         )}
 
+
+        {/* ====================================================
+            SUCCESS
+        ==================================================== */}
+
         {message && (
+
           <div
             className="auth-success"
             role="status"
           >
+
             {message}
+
           </div>
+
         )}
 
-        {!otpMode ? (
-          <form
-            onSubmit={submit}
+
+        {/* ====================================================
+            EMAIL REGISTRATION
+        ==================================================== */}
+
+        {!otpMode &&
+
+          registrationMethod ===
+            "email" && (
+
+            <form
+
+              onSubmit={
+                submitEmailRegistration
+              }
+
+              className="auth-form"
+
+            >
+
+
+              {/* NAME */}
+
+              <label>
+
+                Full name
+
+
+                <div className="input-with-icon">
+
+                  <User
+                    size={18}
+                  />
+
+
+                  <input
+
+                    type="text"
+
+                    autoComplete="name"
+
+                    placeholder="Your name"
+
+                    value={
+                      form.name
+                    }
+
+                    onChange={
+                      (event) =>
+                        update(
+
+                          "name",
+
+                          event.target
+                            .value
+
+                        )
+                    }
+
+                    disabled={
+                      loading ||
+                      submitting
+                    }
+
+                  />
+
+                </div>
+
+              </label>
+
+
+              {/* EMAIL */}
+
+              <label>
+
+                Email address
+
+
+                <div className="input-with-icon">
+
+                  <Mail
+                    size={18}
+                  />
+
+
+                  <input
+
+                    type="email"
+
+                    autoComplete="email"
+
+                    placeholder="you@example.com"
+
+                    value={
+                      form.email
+                    }
+
+                    onChange={
+                      (event) =>
+                        update(
+
+                          "email",
+
+                          event.target
+                            .value
+
+                        )
+                    }
+
+                    disabled={
+                      loading ||
+                      submitting
+                    }
+
+                  />
+
+                </div>
+
+              </label>
+
+
+              {/* PASSWORD */}
+
+              <label>
+
+                Password
+
+
+                <div className="input-with-icon">
+
+                  <Lock
+                    size={18}
+                  />
+
+
+                  <input
+
+                    type={
+                      showPassword
+
+                        ? "text"
+
+                        : "password"
+                    }
+
+                    autoComplete="new-password"
+
+                    placeholder="At least 6 characters"
+
+                    value={
+                      form.password
+                    }
+
+                    onChange={
+                      (event) =>
+                        update(
+
+                          "password",
+
+                          event.target
+                            .value
+
+                        )
+                    }
+
+                    disabled={
+                      loading ||
+                      submitting
+                    }
+
+                  />
+
+
+                  <button
+
+                    type="button"
+
+                    className="input-action"
+
+                    onClick={() =>
+                      setShowPassword(
+                        (value) =>
+                          !value
+                      )
+                    }
+
+                  >
+
+                    {showPassword ? (
+
+                      <EyeOff
+                        size={18}
+                      />
+
+                    ) : (
+
+                      <Eye
+                        size={18}
+                      />
+
+                    )}
+
+                  </button>
+
+                </div>
+
+              </label>
+
+
+              {/* CONFIRM PASSWORD */}
+
+              <label>
+
+                Confirm password
+
+
+                <div className="input-with-icon">
+
+                  <Lock
+                    size={18}
+                  />
+
+
+                  <input
+
+                    type={
+                      showConfirmPassword
+
+                        ? "text"
+
+                        : "password"
+                    }
+
+                    autoComplete="new-password"
+
+                    placeholder="Repeat your password"
+
+                    value={
+                      form.confirmPassword
+                    }
+
+                    onChange={
+                      (event) =>
+                        update(
+
+                          "confirmPassword",
+
+                          event.target
+                            .value
+
+                        )
+                    }
+
+                    disabled={
+                      loading ||
+                      submitting
+                    }
+
+                  />
+
+
+                  <button
+
+                    type="button"
+
+                    className="input-action"
+
+                    onClick={() =>
+                      setShowConfirmPassword(
+                        (value) =>
+                          !value
+                      )
+                    }
+
+                  >
+
+                    {showConfirmPassword ? (
+
+                      <EyeOff
+                        size={18}
+                      />
+
+                    ) : (
+
+                      <Eye
+                        size={18}
+                      />
+
+                    )}
+
+                  </button>
+
+                </div>
+
+              </label>
+
+
+              {/* TERMS */}
+
+              <label className="checkbox-row">
+
+                <input
+
+                  type="checkbox"
+
+                  checked={
+                    form.acceptTerms
+                  }
+
+                  onChange={
+                    (event) =>
+                      update(
+
+                        "acceptTerms",
+
+                        event.target
+                          .checked
+
+                      )
+                  }
+
+                />
+
+
+                <span>
+
+                  I agree to the{" "}
+
+                  <Link to="/terms">
+                    Terms
+                  </Link>
+
+                  {" "}and{" "}
+
+                  <Link to="/privacy">
+                    Privacy Policy
+                  </Link>
+
+                  .
+
+                </span>
+
+              </label>
+
+
+              {/* SUBMIT */}
+
+              <button
+
+                className="auth-submit"
+
+                disabled={
+                  loading ||
+                  submitting
+                }
+
+                type="submit"
+
+              >
+
+                <UserPlus
+                  size={18}
+                />
+
+
+                {submitting
+
+                  ? "Creating account..."
+
+                  : "Create account"
+                }
+
+
+                <ArrowRight
+                  size={18}
+                />
+
+              </button>
+
+            </form>
+
+          )}
+
+
+        {/* ====================================================
+            MOBILE REGISTRATION
+        ==================================================== */}
+
+        {!otpMode &&
+
+          registrationMethod ===
+            "phone" && (
+
+            <form
+
+              onSubmit={
+                sendMobileOtp
+              }
+
+              className="auth-form"
+
+            >
+
+
+              {/* NAME */}
+
+              <label>
+
+                Full name
+
+
+                <div className="input-with-icon">
+
+                  <User
+                    size={18}
+                  />
+
+
+                  <input
+
+                    type="text"
+
+                    autoComplete="name"
+
+                    placeholder="Your name"
+
+                    value={
+                      form.name
+                    }
+
+                    onChange={
+                      (event) =>
+                        update(
+
+                          "name",
+
+                          event.target
+                            .value
+
+                        )
+                    }
+
+                    disabled={
+                      submitting
+                    }
+
+                  />
+
+                </div>
+
+              </label>
+
+
+              {/* PHONE */}
+
+              <label>
+
+                Mobile number
+
+
+                <div className="input-with-icon">
+
+                  <Phone
+                    size={18}
+                  />
+
+
+                  <input
+
+                    type="tel"
+
+                    autoComplete="tel"
+
+                    placeholder="+919876543210"
+
+                    value={
+                      form.phoneNumber
+                    }
+
+                    onChange={
+                      (event) =>
+                        update(
+
+                          "phoneNumber",
+
+                          event.target
+                            .value
+
+                        )
+                    }
+
+                    disabled={
+                      submitting
+                    }
+
+                  />
+
+                </div>
+
+              </label>
+
+
+              {/* TERMS */}
+
+              <label className="checkbox-row">
+
+                <input
+
+                  type="checkbox"
+
+                  checked={
+                    form.acceptTerms
+                  }
+
+                  onChange={
+                    (event) =>
+                      update(
+
+                        "acceptTerms",
+
+                        event.target
+                          .checked
+
+                      )
+                  }
+
+                />
+
+
+                <span>
+
+                  I agree to the{" "}
+
+                  <Link to="/terms">
+                    Terms
+                  </Link>
+
+                  {" "}and{" "}
+
+                  <Link to="/privacy">
+                    Privacy Policy
+                  </Link>
+
+                  .
+
+                </span>
+
+              </label>
+
+
+              {/* SUBMIT */}
+
+              <button
+
+                className="auth-submit"
+
+                disabled={
+                  submitting
+                }
+
+                type="submit"
+
+              >
+
+                <Phone
+                  size={18}
+                />
+
+
+                {submitting
+
+                  ? "Sending OTP..."
+
+                  : "Send OTP"
+                }
+
+
+                <ArrowRight
+                  size={18}
+                />
+
+              </button>
+
+            </form>
+
+          )}
+
+
+        {/* ====================================================
+            OTP SCREEN
+        ==================================================== */}
+
+        {otpMode && (
+
+          <div
             className="auth-form"
           >
-            <label>
-              Full name
 
-              <div className="input-with-icon">
-                <User size={18} />
+            <div className="auth-heading">
 
-                <input
-                  type="text"
-                  name="name"
-                  autoComplete="name"
-                  placeholder="Your name"
-                  value={
-                    form.name
-                  }
-                  onChange={
-                    (event) =>
-                      update(
-                        "name",
-                        event.target
-                          .value
-                      )
-                  }
-                  disabled={
-                    loading ||
-                    otpLoading
-                  }
-                />
-              </div>
-            </label>
-
-            <label>
-              Email address
-
-              <div className="input-with-icon">
-                <Mail size={18} />
-
-                <input
-                  type="email"
-                  name="email"
-                  autoComplete="email"
-                  placeholder="you@example.com"
-                  value={
-                    form.email
-                  }
-                  onChange={
-                    (event) =>
-                      update(
-                        "email",
-                        event.target
-                          .value
-                      )
-                  }
-                  disabled={
-                    loading ||
-                    otpLoading
-                  }
-                />
-              </div>
-            </label>
-
-            <label>
-              Mobile number
-
-              <span
-                style={{
-                  marginLeft: 6,
-                  color:
-                    "#98a2b3",
-                  fontWeight:
-                    400,
-                }}
-              >
-                (optional)
-              </span>
-
-              <div className="input-with-icon">
-                <Phone size={18} />
-
-                <input
-                  type="tel"
-                  name="phoneNumber"
-                  autoComplete="tel"
-                  placeholder="+919876543210"
-                  value={
-                    form.phoneNumber
-                  }
-                  onChange={
-                    (event) =>
-                      update(
-                        "phoneNumber",
-                        event.target
-                          .value
-                      )
-                  }
-                  disabled={
-                    loading ||
-                    otpLoading
-                  }
-                />
-              </div>
-            </label>
-
-            <label>
-              Password
-
-              <div className="input-with-icon">
-                <Lock size={18} />
-
-                <input
-                  type={
-                    showPassword
-                      ? "text"
-                      : "password"
-                  }
-                  name="password"
-                  autoComplete="new-password"
-                  placeholder="At least 6 characters"
-                  value={
-                    form.password
-                  }
-                  onChange={
-                    (event) =>
-                      update(
-                        "password",
-                        event.target
-                          .value
-                      )
-                  }
-                  disabled={loading}
-                />
-
-                <button
-                  type="button"
-                  className="input-action"
-                  onClick={() =>
-                    setShowPassword(
-                      (value) =>
-                        !value
-                    )
-                  }
-                  aria-label={
-                    showPassword
-                      ? "Hide password"
-                      : "Show password"
-                  }
-                  disabled={loading}
-                >
-                  {showPassword ? (
-                    <EyeOff
-                      size={18}
-                    />
-                  ) : (
-                    <Eye
-                      size={18}
-                    />
-                  )}
-                </button>
-              </div>
-            </label>
-
-            <label>
-              Confirm password
-
-              <div className="input-with-icon">
-                <Lock size={18} />
-
-                <input
-                  type={
-                    showConfirmPassword
-                      ? "text"
-                      : "password"
-                  }
-                  name="confirmPassword"
-                  autoComplete="new-password"
-                  placeholder="Repeat your password"
-                  value={
-                    form.confirmPassword
-                  }
-                  onChange={
-                    (event) =>
-                      update(
-                        "confirmPassword",
-                        event.target
-                          .value
-                      )
-                  }
-                  disabled={loading}
-                />
-
-                <button
-                  type="button"
-                  className="input-action"
-                  onClick={() =>
-                    setShowConfirmPassword(
-                      (value) =>
-                        !value
-                    )
-                  }
-                  aria-label={
-                    showConfirmPassword
-                      ? "Hide confirm password"
-                      : "Show confirm password"
-                  }
-                  disabled={loading}
-                >
-                  {showConfirmPassword ? (
-                    <EyeOff
-                      size={18}
-                    />
-                  ) : (
-                    <Eye
-                      size={18}
-                    />
-                  )}
-                </button>
-              </div>
-            </label>
-
-            <label className="checkbox-row">
-              <input
-                type="checkbox"
-                checked={
-                  form.acceptTerms
-                }
-                onChange={
-                  (event) =>
-                    update(
-                      "acceptTerms",
-                      event.target
-                        .checked
-                    )
-                }
-                disabled={loading}
-              />
-
-              <span>
-                I agree to the{" "}
-                <Link to="/terms">
-                  Terms
-                </Link>{" "}
-                and{" "}
-                <Link to="/privacy">
-                  Privacy Policy
-                </Link>
-                .
-              </span>
-            </label>
-
-            <button
-              className="auth-submit"
-              disabled={
-                loading ||
-                otpLoading
-              }
-              type="submit"
-            >
-              <UserPlus
-                size={18}
-              />
-
-              {loading ||
-              otpLoading
-                ? "Creating account..."
-                : "Create account"}
-
-              <ArrowRight
-                size={18}
-              />
-            </button>
-          </form>
-        ) : (
-          <div className="auth-form">
-
-            <div
-              style={{
-                padding:
-                  "16px",
-                borderRadius:
-                  10,
-                background:
-                  "#f0f9ff",
-                border:
-                  "1px solid #cbeafe",
-              }}
-            >
               <ShieldCheck
-                size={22}
+                size={36}
               />
 
-              <strong
-                style={{
-                  display:
-                    "block",
-                  marginTop: 8,
-                }}
-              >
-                Verify your mobile number
-              </strong>
 
-              <p
-                style={{
-                  margin:
-                    "6px 0 0",
-                  color:
-                    "#475569",
-                  fontSize:
-                    13,
-                  lineHeight:
-                    1.5,
-                }}
-              >
-                Enter the 6-digit OTP sent to{" "}
-                {normalizePhone(
-                  form.phoneNumber
-                )}
-                .
+              <h2>
+                Verify mobile number
+              </h2>
+
+
+              <p>
+
+                Enter the 6-digit OTP
+                sent to your mobile number.
+
               </p>
+
             </div>
 
+
             <label>
+
               Verification code
 
+
               <div className="input-with-icon">
+
                 <ShieldCheck
                   size={18}
                 />
 
+
                 <input
+
                   type="text"
+
                   inputMode="numeric"
+
                   maxLength={6}
-                  autoComplete="one-time-code"
-                  placeholder="123456"
+
+                  placeholder="Enter 6-digit OTP"
+
                   value={otp}
+
                   onChange={
                     (event) =>
                       setOtp(
-                        event.target.value.replace(
-                          /\D/g,
-                          ""
-                        )
+
+                        event.target.value
+                          .replace(
+                            /\D/g,
+                            ""
+                          )
+
                       )
                   }
+
                   disabled={
                     otpLoading
                   }
+
                 />
+
               </div>
+
             </label>
 
+
             <button
+
               className="auth-submit"
+
               type="button"
+
               onClick={
-                verifyOtp
+                verifyMobileOtp
               }
+
               disabled={
                 otpLoading
               }
+
             >
+
               <ShieldCheck
                 size={18}
               />
 
-              {otpLoading
-                ? "Verifying..."
-                : "Verify mobile"}
 
-              <ArrowRight
-                size={18}
-              />
+              {otpLoading
+
+                ? "Verifying..."
+
+                : "Verify OTP"
+              }
+
             </button>
 
+
             <button
-              className="auth-secondary"
+
               type="button"
+
+              className="auth-secondary"
+
               onClick={
                 resendOtp
               }
+
               disabled={
                 otpLoading
               }
+
             >
+
               <RefreshCw
                 size={17}
               />
 
               Resend OTP
+
             </button>
+
+
+            <button
+
+              type="button"
+
+              className="auth-back"
+
+              onClick={
+                backToPhoneForm
+              }
+
+            >
+
+              ← Change mobile number
+
+            </button>
+
           </div>
+
         )}
+
+
+        {/* INVISIBLE RECAPTCHA */}
 
         <div
           id="registration-recaptcha"
-          aria-hidden="true"
         />
 
+
+        {/* ====================================================
+            LOGIN LINK
+        ==================================================== */}
+
         {!otpMode && (
+
           <>
+
             <div className="auth-divider">
+
               <span>
-                Already registered?
+                Already have an account?
               </span>
+
             </div>
 
+
             <Link
+
               className="auth-secondary"
+
               to="/login"
+
             >
-              Sign in instead
+
+              Sign in
+
             </Link>
+
           </>
+
         )}
 
+
         <Link
+
           className="auth-back"
+
           to="/"
+
         >
+
           ← Back to NewsRoom
+
         </Link>
 
+
       </section>
+
     </main>
+
   );
+
 }

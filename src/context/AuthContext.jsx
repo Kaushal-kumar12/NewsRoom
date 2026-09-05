@@ -512,6 +512,79 @@ export function AuthProvider({
 
     }
 
+    /*
+|----------------------------------------------------------
+| PHONE AUTH WITHOUT NEWSROOM PROFILE
+|
+| A phone OTP can create/sign in a Firebase account before
+| the NewsRoom registration profile is completed.
+|
+| Do NOT automatically create an ACTIVE NewsRoom account.
+|----------------------------------------------------------
+*/
+
+    if (
+
+      currentFirebaseUser.phoneNumber &&
+
+      !currentFirebaseUser.email
+
+    ) {
+
+      return buildProfile(
+
+        currentFirebaseUser,
+
+        {
+
+          name:
+
+            currentFirebaseUser.displayName ||
+
+            "User",
+
+
+          displayName:
+
+            currentFirebaseUser.displayName ||
+
+            "User",
+
+
+          email:
+            "",
+
+
+          phoneNumber:
+
+            currentFirebaseUser.phoneNumber,
+
+
+          phoneVerified:
+            true,
+
+
+          role:
+            ROLES.USER,
+
+
+          status:
+            "PENDING_PROFILE_SETUP",
+
+
+          accountStatus:
+            "PENDING_PROFILE_SETUP",
+
+
+          verificationMethod:
+            "PHONE_OTP",
+
+        }
+
+      );
+
+    }
+
 
     /* --------------------------------------------------------
        MISSING PROFILE
@@ -1163,7 +1236,7 @@ export function AuthProvider({
             );
 
           } catch (
-            error
+          error
           ) {
 
             console.error(
@@ -1313,7 +1386,7 @@ export function AuthProvider({
       emailVerified &&
 
       accountStatus ===
-        "PENDING_EMAIL_VERIFICATION"
+      "PENDING_EMAIL_VERIFICATION"
 
     ) {
 
@@ -1392,7 +1465,7 @@ export function AuthProvider({
     if (
 
       accountStatus ===
-        "PENDING_EMAIL_VERIFICATION" &&
+      "PENDING_EMAIL_VERIFICATION" &&
 
       !emailVerified
 
@@ -1413,7 +1486,7 @@ export function AuthProvider({
     if (
 
       accountStatus ===
-        "PENDING_PHONE_VERIFICATION" &&
+      "PENDING_PHONE_VERIFICATION" &&
 
       !phoneVerified
 
@@ -1475,8 +1548,8 @@ export function AuthProvider({
 
 
   /* ==========================================================
-     PUBLIC REGISTRATION
-  ========================================================== */
+    PUBLIC EMAIL REGISTRATION
+ ========================================================== */
 
   async function register({
 
@@ -1486,23 +1559,20 @@ export function AuthProvider({
 
     password,
 
-    phoneNumber = "",
-
   }) {
 
     const normalizedName =
-      name?.trim();
+      String(
+        name || ""
+      ).trim();
 
 
     const normalizedEmail =
-      email
-        ?.trim()
+      String(
+        email || ""
+      )
+        .trim()
         .toLowerCase();
-
-
-    const normalizedPhone =
-      phoneNumber?.trim() ||
-      "";
 
 
     if (!normalizedName) {
@@ -1558,20 +1628,6 @@ export function AuthProvider({
     );
 
 
-    const hasPhone =
-      Boolean(
-        normalizedPhone
-      );
-
-
-    const initialStatus =
-      hasPhone
-
-        ? "PENDING_PHONE_VERIFICATION"
-
-        : "PENDING_EMAIL_VERIFICATION";
-
-
     const profile = {
 
       id:
@@ -1595,7 +1651,7 @@ export function AuthProvider({
 
 
       phoneNumber:
-        normalizedPhone,
+        "",
 
 
       phoneVerified:
@@ -1607,12 +1663,11 @@ export function AuthProvider({
 
 
       verificationMethod:
+        "EMAIL_LINK",
 
-        hasPhone
 
-          ? "PHONE_OTP"
-
-          : "EMAIL_LINK",
+      activationMethod:
+        "EMAIL_LINK",
 
 
       role:
@@ -1620,11 +1675,11 @@ export function AuthProvider({
 
 
       status:
-        initialStatus,
+        "PENDING_EMAIL_VERIFICATION",
 
 
       accountStatus:
-        initialStatus,
+        "PENDING_EMAIL_VERIFICATION",
 
 
       avatar:
@@ -1734,27 +1789,28 @@ export function AuthProvider({
     );
 
 
-    if (!hasPhone) {
+    /*
+    |----------------------------------------------------------
+    | SEND ACTIVATION EMAIL
+    |----------------------------------------------------------
+    */
 
-      await sendEmailVerification(
+    await sendEmailVerification(
 
-        credential.user,
+      credential.user,
 
-        {
+      {
 
-          url:
+        url:
+          `${window.location.origin}/verify-email`,
 
-            `${window.location.origin}/verify-email`,
 
+        handleCodeInApp:
+          false,
 
-          handleCodeInApp:
-            true,
+      }
 
-        }
-
-      );
-
-    }
+    );
 
 
     setFirebaseUser(
@@ -1772,12 +1828,8 @@ export function AuthProvider({
       ...profile,
 
 
-      requiresPhoneVerification:
-        hasPhone,
-
-
       requiresEmailVerification:
-        !hasPhone,
+        true,
 
     };
 
@@ -1785,69 +1837,257 @@ export function AuthProvider({
 
 
   /* ==========================================================
-     PHONE VERIFIED
-  ========================================================== */
+   COMPLETE PHONE REGISTRATION
+========================================================== */
 
-  async function markPhoneRegistrationVerified(
-    phoneNumber
-  ) {
+  async function completePhoneRegistration({
+
+    firebaseAccount,
+
+    name,
+
+    phoneNumber,
+
+  }) {
 
     if (
-      !auth.currentUser?.uid
+      !firebaseAccount?.uid
     ) {
 
       throw new Error(
-        "No registration session is active."
+        "Mobile authentication failed."
       );
 
     }
 
 
+    const normalizedName =
+      String(
+        name || ""
+      ).trim();
+
+
     const normalizedPhone =
-      phoneNumber?.trim();
+      String(
+        phoneNumber || ""
+      ).trim();
 
 
-    await setDoc(
+    if (!normalizedName) {
 
+      throw new Error(
+        "Name is required."
+      );
+
+    }
+
+
+    if (!normalizedPhone) {
+
+      throw new Error(
+        "Mobile number is required."
+      );
+
+    }
+
+
+    const userRef =
       doc(
 
         db,
 
         "users",
 
-        auth.currentUser.uid
+        firebaseAccount.uid
 
-      ),
+      );
+
+
+    const existingSnapshot =
+      await getDoc(
+        userRef
+      );
+
+
+    /*
+    |----------------------------------------------------------
+    | PREVENT OVERWRITING AN EXISTING ACCOUNT
+    |----------------------------------------------------------
+    */
+
+    if (
+      existingSnapshot.exists()
+    ) {
+
+      throw new Error(
+        "A NewsRoom account already exists for this mobile number. Please sign in instead."
+      );
+
+    }
+
+
+    await updateProfile(
+
+      firebaseAccount,
 
       {
 
-        phoneNumber:
+        displayName:
+          normalizedName,
 
-          normalizedPhone ||
+      }
 
-          auth.currentUser.phoneNumber ||
-
-          "",
-
-
-        phoneVerified:
-          true,
+    );
 
 
-        status:
-          "ACTIVE",
+    const profile = {
+
+      id:
+        firebaseAccount.uid,
 
 
-        accountStatus:
-          "ACTIVE",
+      uid:
+        firebaseAccount.uid,
 
 
-        verificationMethod:
-          "PHONE_OTP",
+      name:
+        normalizedName,
 
 
-        activationMethod:
-          "PHONE_OTP",
+      displayName:
+        normalizedName,
+
+
+      email:
+        "",
+
+
+      phoneNumber:
+
+        normalizedPhone ||
+
+        firebaseAccount.phoneNumber ||
+
+        "",
+
+
+      phoneVerified:
+        true,
+
+
+      emailVerified:
+        false,
+
+
+      verificationMethod:
+        "PHONE_OTP",
+
+
+      activationMethod:
+        "PHONE_OTP",
+
+
+      role:
+        ROLES.USER,
+
+
+      status:
+        "ACTIVE",
+
+
+      accountStatus:
+        "ACTIVE",
+
+
+      avatar:
+        "",
+
+
+      bio:
+        "",
+
+
+      about:
+        "",
+
+
+      website:
+        "",
+
+
+      address:
+        "",
+
+
+      city:
+        "",
+
+
+      state:
+        "",
+
+
+      country:
+        "",
+
+
+      postalCode:
+        "",
+
+
+      linkedin:
+        "",
+
+
+      twitter:
+        "",
+
+
+      facebook:
+        "",
+
+
+      instagram:
+        "",
+
+
+      followed:
+        [],
+
+
+      notifyBreaking:
+        true,
+
+
+      notifyCategory:
+        true,
+
+
+      isSuperAdmin:
+        false,
+
+
+      isAdmin:
+        false,
+
+
+      isStaff:
+        false,
+
+    };
+
+
+    await setDoc(
+
+      userRef,
+
+      {
+
+        ...profile,
+
+
+        createdAt:
+          serverTimestamp(),
 
 
         activatedAt:
@@ -1857,18 +2097,178 @@ export function AuthProvider({
         updatedAt:
           serverTimestamp(),
 
-      },
-
-      {
-
-        merge: true,
-
       }
 
     );
 
 
-    return await refreshProfile();
+    const completedProfile =
+      await loadUserProfile(
+        firebaseAccount
+      );
+
+
+    setFirebaseUser(
+      firebaseAccount
+    );
+
+
+    setUser(
+      completedProfile
+    );
+
+
+    return completedProfile;
+
+  }
+
+
+  /* ==========================================================
+   COMPLETE PHONE LOGIN
+========================================================== */
+
+  async function completePhoneLogin(
+
+    firebaseAccount
+
+  ) {
+
+    if (
+      !firebaseAccount?.uid
+    ) {
+
+      throw new Error(
+        "Mobile authentication failed."
+      );
+
+    }
+
+
+    const userRef =
+      doc(
+
+        db,
+
+        "users",
+
+        firebaseAccount.uid
+
+      );
+
+
+    const snapshot =
+      await getDoc(
+        userRef
+      );
+
+
+    /*
+    |----------------------------------------------------------
+    | IMPORTANT
+    |
+    | Firebase can authenticate a phone number even when that
+    | phone number does not have a completed NewsRoom profile.
+    |
+    | Do not allow that account to access NewsRoom.
+    |----------------------------------------------------------
+    */
+
+    if (
+      !snapshot.exists()
+    ) {
+
+      await signOut(
+        auth
+      );
+
+
+      throw new Error(
+        "No NewsRoom account was found for this mobile number. Please register first."
+      );
+
+    }
+
+
+    const firestoreData =
+      snapshot.data();
+
+
+    const accountStatus =
+      String(
+
+        firestoreData.accountStatus ||
+
+        firestoreData.status ||
+
+        ""
+
+      )
+        .trim()
+        .toUpperCase();
+
+
+    if (
+      accountStatus ===
+      "PENDING_PROFILE_SETUP"
+    ) {
+
+      await signOut(
+        auth
+      );
+
+
+      throw new Error(
+        "Your NewsRoom registration is incomplete."
+      );
+
+    }
+
+
+    if (
+
+      [
+
+        "DISABLED",
+
+        "SUSPENDED",
+
+        "BLOCKED",
+
+      ].includes(
+        accountStatus
+      )
+
+    ) {
+
+      await signOut(
+        auth
+      );
+
+
+      throw new Error(
+        "Your NewsRoom account is currently disabled. Please contact an administrator."
+      );
+
+    }
+
+
+    const profile =
+      await loadUserProfile(
+        firebaseAccount
+      );
+
+
+    setFirebaseUser(
+      firebaseAccount
+    );
+
+
+    setUser(
+      profile
+    );
+
+
+    return profile;
 
   }
 
@@ -2003,7 +2403,7 @@ export function AuthProvider({
     Boolean(user) &&
 
     currentRole ===
-      ROLES.USER;
+    ROLES.USER;
 
 
   const isStaff =
@@ -2072,10 +2472,11 @@ export function AuthProvider({
 
         requestContactChange,
 
-
-        markPhoneRegistrationVerified,
-
         resendEmailActivation,
+
+        completePhoneRegistration,
+
+        completePhoneLogin,
 
 
         role:

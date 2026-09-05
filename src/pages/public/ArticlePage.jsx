@@ -2,6 +2,7 @@
 
 import React, {
   useMemo,
+  useEffect,
 } from "react";
 
 import {
@@ -19,6 +20,10 @@ import {
 import {
   useApp,
 } from "../../context/AppContext";
+
+import {
+  incrementNewsViewCount,
+} from "../../services/editorial/editorialService";
 
 import CommentsSection
   from "../../components/comments/CommentsSection";
@@ -191,22 +196,20 @@ function formatViews(value = 0) {
 
   if (views >= 1000000) {
 
-    return `${
-      (
-        views / 1000000
-      ).toFixed(1)
-    }M`;
+    return `${(
+      views / 1000000
+    ).toFixed(1)
+      }M`;
 
   }
 
 
   if (views >= 1000) {
 
-    return `${
-      (
-        views / 1000
-      ).toFixed(1)
-    }K`;
+    return `${(
+      views / 1000
+    ).toFixed(1)
+      }K`;
 
   }
 
@@ -231,6 +234,48 @@ export default function ArticlePage() {
 
   } = useApp();
 
+  useEffect(
+    () => {
+
+      if (
+        loading ||
+        !story?.id
+      ) {
+
+        return;
+
+      }
+
+
+      async function addView() {
+
+        try {
+
+          await incrementNewsViewCount(
+            story.id
+          );
+
+        } catch (error) {
+
+          console.error(
+            "Unable to increment view count:",
+            error
+          );
+
+        }
+
+      }
+
+
+      addView();
+
+    },
+    [
+      loading,
+      story?.id,
+    ]
+  );
+
 
   /* =====================================================
      FIND ONLY PUBLISHED ARTICLE
@@ -254,7 +299,7 @@ export default function ArticlePage() {
               item?.id
             )
 
-              ===
+            ===
 
             String(
               id
@@ -274,9 +319,9 @@ export default function ArticlePage() {
 
                 .toUpperCase()
 
-                ===
+              ===
 
-                "PUBLISHED"
+              "PUBLISHED"
 
             )
 
@@ -564,31 +609,31 @@ export default function ArticlePage() {
           const text =
 
             typeof item ===
-            "string"
+              "string"
 
               ? item
 
               : (
 
-                  item?.body
+                item?.body
 
-                  ||
+                ||
 
-                  item?.text
+                item?.text
 
-                  ||
+                ||
 
-                  item?.content
+                item?.content
 
-                  ||
+                ||
 
-                  item?.value
+                item?.value
 
-                  ||
+                ||
 
-                  ""
+                ""
 
-                );
+              );
 
 
           if (
@@ -631,38 +676,38 @@ export default function ArticlePage() {
     const stringContent =
 
       typeof story?.content ===
-      "string"
+        "string"
 
         ? story.content
 
         : (
 
-            typeof story?.body ===
+          typeof story?.body ===
             "string"
 
-              ? story.body
+            ? story.body
 
-              : (
+            : (
 
-                  typeof story?.article ===
-                  "string"
+              typeof story?.article ===
+                "string"
 
-                    ? story.article
+                ? story.article
 
-                    : (
+                : (
 
-                        typeof story?.description ===
-                        "string"
+                  typeof story?.description ===
+                    "string"
 
-                          ? story.description
+                    ? story.description
 
-                          : ""
-
-                      )
+                    : ""
 
                 )
 
-          );
+            )
+
+        );
 
 
     if (
@@ -1024,11 +1069,9 @@ export default function ArticlePage() {
 
                 to={
 
-                  `/category/${
-
-                    createCategorySlug(
-                      story.category
-                    )
+                  `/category/${createCategorySlug(
+                    story.category
+                  )
 
                   }`
 

@@ -51,6 +51,15 @@ import RegisterPage
 import AdminLoginPage
   from "../pages/auth/AdminLoginPage";
 
+import VerifyEmailPage
+  from "../pages/auth/VerifyEmailPage";
+
+import ForgotPasswordPage
+  from "../pages/auth/ForgotPasswordPage";
+
+import ResetPasswordPage
+  from "../pages/auth/ResetPasswordPage";
+
 
 /* ============================================================
    PUBLIC PAGES
@@ -1479,6 +1488,29 @@ export default function AppRoutes() {
         path="/register"
         element={
           <RegisterPage />
+        }
+      />
+
+      <Route
+        path="/verify-email"
+        element={
+          <VerifyEmailPage />
+        }
+      />
+
+
+      <Route
+        path="/forgot-password"
+        element={
+          <ForgotPasswordPage />
+        }
+      />
+
+
+      <Route
+        path="/reset-password"
+        element={
+          <ResetPasswordPage />
         }
       />
 

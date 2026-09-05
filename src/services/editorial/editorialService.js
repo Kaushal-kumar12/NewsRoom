@@ -6,6 +6,7 @@ import {
   doc,
   getDoc,
   getDocs,
+  increment,
   query,
   serverTimestamp,
   updateDoc,
@@ -326,6 +327,57 @@ export async function getNewsById(
 
 }
 
+/* 
+|--------------------------------------------------------------------------
+| INCREMENT NEWS VIEW COUNT
+|--------------------------------------------------------------------------
+|
+| Every article page visit increases
+| the view count by 1.
+|
+| Same user can generate multiple views.
+|
+*/
+
+export async function incrementNewsViewCount(
+  newsId
+) {
+
+  requireDb();
+
+
+  if (!newsId) {
+
+    throw new Error(
+      "News ID is required."
+    );
+
+  }
+
+
+  const newsRef =
+    doc(
+      db,
+      NEWS,
+      newsId
+    );
+
+
+  await updateDoc(
+    newsRef,
+    {
+
+      views:
+        increment(1),
+
+    }
+  );
+
+
+  return true;
+
+}
+
 
 /*
 |--------------------------------------------------------------------------
@@ -352,9 +404,9 @@ export async function getEditorialStories() {
     .filter(
       (item) =>
         item.status !==
-          EDITORIAL_STATUSES.DRAFT &&
+        EDITORIAL_STATUSES.DRAFT &&
         item.status !==
-          EDITORIAL_STATUSES.DELETED
+        EDITORIAL_STATUSES.DELETED
     )
     .sort(
       (a, b) =>
@@ -1307,6 +1359,9 @@ export async function publishStory(
       status:
         EDITORIAL_STATUSES
           .PUBLISHED,
+
+      views:
+        story.views || 0,
 
 
       publishedAt:
