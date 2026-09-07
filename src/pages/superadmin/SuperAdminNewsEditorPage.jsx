@@ -40,6 +40,7 @@ import {
   updateNewsDraft,
   getNewsById,
   submitNewsForReview,
+  publishNewsDirect,
 } from "../../services/editorial/newsWorkflowService";
 
 import { useAuth } from "../../context/AuthContext";
@@ -116,7 +117,6 @@ function normalizeArticle(article) {
   return {
     title: article?.title || "",
     subtitle: article?.subtitle || "",
-    summary: article?.summary || "",
     category: article?.category || "General",
 
     tags: Array.isArray(article?.tags)
@@ -186,6 +186,9 @@ export default function SuperAdminNewsEditorPage() {
   const [submitting, setSubmitting] =
     useState(false);
 
+  const [publishing, setPublishing] =
+    useState(false);
+
   const [showPreview, setShowPreview] =
     useState(false);
 
@@ -205,7 +208,6 @@ export default function SuperAdminNewsEditorPage() {
   const [form, setForm] = useState({
     title: "",
     subtitle: "",
-    summary: "",
     category: "General",
     tags: [],
     featuredImage: "",
@@ -549,10 +551,6 @@ export default function SuperAdminNewsEditorPage() {
       return "Headline is required.";
     }
 
-    if (!form.summary.trim()) {
-      return "Please add a short summary.";
-    }
-
     const hasContent =
       form.blocks.some((block) => {
         if (
@@ -589,8 +587,7 @@ export default function SuperAdminNewsEditorPage() {
       subtitle:
         form.subtitle.trim(),
 
-      summary:
-        form.summary.trim(),
+      summary: "",
 
       category:
         form.category,
@@ -809,6 +806,79 @@ export default function SuperAdminNewsEditorPage() {
 
 
   /* =======================================================
+     PUBLISH NOW (SUPER ADMIN ONLY)
+     ======================================================= */
+
+  const publishNow = async () => {
+    setError("");
+    setMessage("");
+
+    if (!requireAuthenticatedUser()) return;
+
+    const validationError = validate();
+
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+
+    try {
+      setPublishing(true);
+
+      let currentId = newsId;
+
+      // Always save the latest editor state before publishing.
+      if (currentId) {
+        await updateNewsDraft(
+          currentId,
+          buildPayload,
+          user
+        );
+      } else {
+        currentId = await createNewsDraft(
+          buildPayload,
+          user
+        );
+
+        if (currentId) {
+          setNewsId(currentId);
+        }
+      }
+
+      if (!currentId) {
+        throw new Error(
+          "Unable to determine the news article ID."
+        );
+      }
+
+      // Super Admin can bypass the editorial review workflow
+      // and publish directly.
+      await publishNewsDirect(
+        currentId,
+        user
+      );
+
+      setMessage(
+        "News published successfully."
+      );
+
+      navigate(
+        "/super-admin/editorial"
+      );
+    } catch (err) {
+      console.error(err);
+
+      setError(
+        err?.message ||
+          "Unable to publish the article."
+      );
+    } finally {
+      setPublishing(false);
+    }
+  };
+
+
+  /* =======================================================
      LOADING
      ======================================================= */
 
@@ -879,7 +949,8 @@ export default function SuperAdminNewsEditorPage() {
             onClick={saveDraft}
             disabled={
               saving ||
-              submitting
+              submitting ||
+              publishing
             }
           >
             {saving ? (
@@ -899,12 +970,38 @@ export default function SuperAdminNewsEditorPage() {
           <button
             type="button"
             className="editorial-btn primary"
+            onClick={publishNow}
+            disabled={
+              saving ||
+              submitting ||
+              publishing
+            }
+            title="Publish immediately without sending for review"
+          >
+            {publishing ? (
+              <Loader2
+                size={16}
+                className="editorial-spin"
+              />
+            ) : (
+              <CheckCircle2 size={16} />
+            )}
+
+            {publishing
+              ? "Publishing..."
+              : "Publish Now"}
+          </button>
+
+          <button
+            type="button"
+            className="editorial-btn primary"
             onClick={
               submitForReview
             }
             disabled={
               saving ||
-              submitting
+              submitting ||
+              publishing
             }
           >
             {submitting ? (
@@ -1093,28 +1190,6 @@ export default function SuperAdminNewsEditorPage() {
                     Opinion
                   </option>
                 </select>
-              </label>
-
-
-              {/* SUMMARY */}
-              <label className="editorial-field full">
-                <span>
-                  Summary *
-                </span>
-
-                <textarea
-                  rows={5}
-                  value={
-                    form.summary
-                  }
-                  onChange={(event) =>
-                    updateField(
-                      "summary",
-                      event.target.value
-                    )
-                  }
-                  placeholder="Short summary used in cards, search and social previews..."
-                />
               </label>
 
 
@@ -1896,16 +1971,6 @@ export default function SuperAdminNewsEditorPage() {
                 }
                 text="Headline added"
               />
-
-              <CheckItem
-                complete={
-                  Boolean(
-                    form.summary.trim()
-                  )
-                }
-                text="Summary added"
-              />
-
               <CheckItem
                 complete={
                   form.blocks.some(
@@ -2130,13 +2195,6 @@ function EditorialPreviewModal({
               <h2>
                 {form.subtitle}
               </h2>
-            )}
-
-
-            {form.summary && (
-              <p className="editorial-preview-lead">
-                {form.summary}
-              </p>
             )}
 
 

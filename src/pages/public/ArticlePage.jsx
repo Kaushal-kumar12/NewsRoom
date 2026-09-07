@@ -1,9 +1,12 @@
-// src/pages/public/Article.jsx
+// src/pages/public/ArticlePage.jsx
 
 import React, {
-  useMemo,
   useEffect,
+  useMemo,
+  useRef,
+  useState,
 } from "react";
+
 
 import {
   ArrowLeft,
@@ -12,28 +15,41 @@ import {
   Newspaper,
 } from "lucide-react";
 
+
 import {
   Link,
   useParams,
 } from "react-router-dom";
 
+
 import {
   useApp,
 } from "../../context/AppContext";
+
 
 import {
   incrementNewsViewCount,
 } from "../../services/editorial/editorialService";
 
+
 import CommentsSection
   from "../../components/comments/CommentsSection";
+
 
 import ArticleActions
   from "../../components/public/ArticleActions";
 
+
 import RelatedNews
   from "../../components/public/RelatedNews";
 
+
+
+/*
+|--------------------------------------------------------------------------
+| Get Article Image
+|--------------------------------------------------------------------------
+*/
 
 function getImageUrl(story) {
 
@@ -62,6 +78,13 @@ function getImageUrl(story) {
 }
 
 
+
+/*
+|--------------------------------------------------------------------------
+| Create Category Slug
+|--------------------------------------------------------------------------
+*/
+
 function createCategorySlug(category) {
 
   return String(
@@ -80,6 +103,13 @@ function createCategorySlug(category) {
 }
 
 
+
+/*
+|--------------------------------------------------------------------------
+| Convert Firebase Date
+|--------------------------------------------------------------------------
+*/
+
 function getDateValue(value) {
 
   if (!value) {
@@ -89,9 +119,17 @@ function getDateValue(value) {
   }
 
 
+  /*
+  |--------------------------------------------------------------------------
+  | Firebase Timestamp
+  |--------------------------------------------------------------------------
+  */
+
   if (
+
     typeof value?.toDate ===
     "function"
+
   ) {
 
     return value.toDate();
@@ -99,24 +137,43 @@ function getDateValue(value) {
   }
 
 
+  /*
+  |--------------------------------------------------------------------------
+  | Firebase Timestamp using toMillis
+  |--------------------------------------------------------------------------
+  */
+
   if (
+
     typeof value?.toMillis ===
     "function"
+
   ) {
 
     return new Date(
+
       value.toMillis()
+
     );
 
   }
 
 
+  /*
+  |--------------------------------------------------------------------------
+  | Normal Date / String
+  |--------------------------------------------------------------------------
+  */
+
   const date =
+
     new Date(value);
 
 
   return Number.isNaN(
+
     date.getTime()
+
   )
 
     ? null
@@ -126,9 +183,17 @@ function getDateValue(value) {
 }
 
 
+
+/*
+|--------------------------------------------------------------------------
+| Format Article Date
+|--------------------------------------------------------------------------
+*/
+
 function formatArticleDate(value) {
 
   const date =
+
     getDateValue(value);
 
 
@@ -158,9 +223,17 @@ function formatArticleDate(value) {
 }
 
 
+
+/*
+|--------------------------------------------------------------------------
+| Format Article Time
+|--------------------------------------------------------------------------
+*/
+
 function formatArticleTime(value) {
 
   const date =
+
     getDateValue(value);
 
 
@@ -188,18 +261,27 @@ function formatArticleTime(value) {
 }
 
 
+
+/*
+|--------------------------------------------------------------------------
+| Format Views
+|--------------------------------------------------------------------------
+*/
+
 function formatViews(value = 0) {
 
   const views =
+
     Number(value) || 0;
 
 
   if (views >= 1000000) {
 
     return `${(
+
       views / 1000000
-    ).toFixed(1)
-      }M`;
+
+    ).toFixed(1)}M`;
 
   }
 
@@ -207,9 +289,10 @@ function formatViews(value = 0) {
   if (views >= 1000) {
 
     return `${(
+
       views / 1000
-    ).toFixed(1)
-      }K`;
+
+    ).toFixed(1)}K`;
 
   }
 
@@ -219,12 +302,33 @@ function formatViews(value = 0) {
 }
 
 
+
+/*
+|--------------------------------------------------------------------------
+| Article Page
+|--------------------------------------------------------------------------
+*/
+
 export default function ArticlePage() {
 
 
+  /*
+  |--------------------------------------------------------------------------
+  | URL Article ID
+  |--------------------------------------------------------------------------
+  */
+
   const { id } =
+
     useParams();
 
+
+
+  /*
+  |--------------------------------------------------------------------------
+  | App Context
+  |--------------------------------------------------------------------------
+  */
 
   const {
 
@@ -234,56 +338,21 @@ export default function ArticlePage() {
 
   } = useApp();
 
-  useEffect(
-    () => {
-
-      if (
-        loading ||
-        !story?.id
-      ) {
-
-        return;
-
-      }
 
 
-      async function addView() {
-
-        try {
-
-          await incrementNewsViewCount(
-            story.id
-          );
-
-        } catch (error) {
-
-          console.error(
-            "Unable to increment view count:",
-            error
-          );
-
-        }
-
-      }
-
-
-      addView();
-
-    },
-    [
-      loading,
-      story?.id,
-    ]
-  );
-
-
-  /* =====================================================
-     FIND ONLY PUBLISHED ARTICLE
-
-     This prevents public users from accessing
-     draft or unpublished articles directly
-     through the article URL.
-  ===================================================== */
+  /*
+  |--------------------------------------------------------------------------
+  | Find Only Published Article
+  |--------------------------------------------------------------------------
+  |
+  | This prevents public users from accessing:
+  |
+  | - Draft articles
+  | - Unpublished articles
+  | - Invalid article URLs
+  |
+  |--------------------------------------------------------------------------
+  */
 
   const story =
 
@@ -296,13 +365,17 @@ export default function ArticlePage() {
           (item) =>
 
             String(
+
               item?.id
+
             )
 
             ===
 
             String(
+
               id
+
             )
 
             &&
@@ -314,7 +387,9 @@ export default function ArticlePage() {
               ||
 
               String(
+
                 item.status
+
               )
 
                 .toUpperCase()
@@ -338,9 +413,269 @@ export default function ArticlePage() {
     );
 
 
+
+  /*
+  |--------------------------------------------------------------------------
+  | Prevent Duplicate View Counting
+  |--------------------------------------------------------------------------
+  |
+  | React development mode can execute effects more than once.
+  |
+  | This prevents the same article from being counted
+  | multiple times by the same component instance.
+  |
+  |--------------------------------------------------------------------------
+  */
+
+  const countedViewId =
+
+    useRef(null);
+
+
+
+  /*
+  |--------------------------------------------------------------------------
+  | Local View Count
+  |--------------------------------------------------------------------------
+  |
+  | This allows the page to immediately display
+  | the updated view count.
+  |
+  |--------------------------------------------------------------------------
+  */
+
+  const [
+
+    displayedViews,
+
+    setDisplayedViews,
+
+  ] = useState(
+
+    Number(
+
+      story?.views
+
+    ) || 0
+
+  );
+
+
+
+  /*
+  |--------------------------------------------------------------------------
+  | Update Local Views When Article Changes
+  |--------------------------------------------------------------------------
+  */
+
+  useEffect(
+
+    () => {
+
+      setDisplayedViews(
+
+        Number(
+
+          story?.views
+
+        ) || 0
+
+      );
+
+    },
+
+    [
+
+      story?.id,
+
+      story?.views,
+
+    ]
+
+  );
+
+
+
+  /*
+  |--------------------------------------------------------------------------
+  | Increment Article View Count
+  |--------------------------------------------------------------------------
+  |
+  | Every time an article page is visited:
+  |
+  | views + 1
+  |
+  | Current implementation:
+  |
+  | - Not IP based
+  | - Not unique user based
+  | - Same user can increase count again
+  | - Refreshing/revisiting can increase views
+  |
+  |--------------------------------------------------------------------------
+  */
+
+  useEffect(
+
+    () => {
+
+
+      /*
+      |--------------------------------------------------------------------------
+      | Wait Until News Loading Is Complete
+      |--------------------------------------------------------------------------
+      */
+
+      if (
+
+        loading
+
+        ||
+
+        !story?.id
+
+      ) {
+
+        return;
+
+      }
+
+
+
+      /*
+      |--------------------------------------------------------------------------
+      | Prevent Duplicate Count
+      |--------------------------------------------------------------------------
+      */
+
+      if (
+
+        countedViewId.current ===
+
+        story.id
+
+      ) {
+
+        return;
+
+      }
+
+
+
+      /*
+      |--------------------------------------------------------------------------
+      | Mark This Article As Counted
+      |--------------------------------------------------------------------------
+      */
+
+      countedViewId.current =
+
+        story.id;
+
+
+
+      /*
+      |--------------------------------------------------------------------------
+      | Increment Firebase View Count
+      |--------------------------------------------------------------------------
+      */
+
+      async function addView() {
+
+        try {
+
+
+          await incrementNewsViewCount(
+
+            story.id
+
+          );
+
+
+
+          /*
+          |--------------------------------------------------------------------------
+          | Update Current Page View Count Immediately
+          |--------------------------------------------------------------------------
+          */
+
+          setDisplayedViews(
+
+            (
+
+              previousViews
+
+            ) =>
+
+              (
+
+                Number(
+
+                  previousViews
+
+                ) || 0
+
+              )
+
+              +
+
+              1
+
+          );
+
+
+        } catch (error) {
+
+
+          console.error(
+
+            "Unable to increment view count:",
+
+            error
+
+          );
+
+
+        }
+
+      }
+
+
+
+      addView();
+
+
+    },
+
+    [
+
+      loading,
+
+      story?.id,
+
+    ]
+
+  );
+
+
+
+  /*
+  |--------------------------------------------------------------------------
+  | Article Image
+  |--------------------------------------------------------------------------
+  */
+
   const imageUrl =
+
     getImageUrl(story);
 
+
+
+  /*
+  |--------------------------------------------------------------------------
+  | Published Date
+  |--------------------------------------------------------------------------
+  */
 
   const publishedDate =
 
@@ -351,17 +686,29 @@ export default function ArticlePage() {
     story?.createdAt;
 
 
+
+  /*
+  |--------------------------------------------------------------------------
+  | Render Article Content
+  |--------------------------------------------------------------------------
+  */
+
   function renderArticleContent() {
 
 
-    /* ===============================================
-       ARTICLE BLOCKS
-    =============================================== */
+
+    /*
+    ========================================================================
+    ARTICLE BLOCKS
+    ========================================================================
+    */
 
     if (
 
       Array.isArray(
+
         story?.blocks
+
       )
 
       &&
@@ -389,13 +736,17 @@ export default function ArticlePage() {
           }
 
 
-          /* ===========================================
-             IMAGE BLOCK
-          =========================================== */
+
+          /*
+          ==================================================================
+          IMAGE BLOCK
+          ==================================================================
+          */
 
           if (
 
             block.type ===
+
             "image"
 
           ) {
@@ -412,6 +763,7 @@ export default function ArticlePage() {
               ||
 
               block.src;
+
 
 
             if (!blockImage) {
@@ -485,9 +837,12 @@ export default function ArticlePage() {
           }
 
 
-          /* ===========================================
-             TEXT CONTENT
-          =========================================== */
+
+          /*
+          ==================================================================
+          TEXT CONTENT
+          ==================================================================
+          */
 
           const text =
 
@@ -510,9 +865,14 @@ export default function ArticlePage() {
             "";
 
 
+
           if (
 
-            !String(text).trim()
+            !String(
+
+              text
+
+            ).trim()
 
           ) {
 
@@ -521,13 +881,17 @@ export default function ArticlePage() {
           }
 
 
-          /* ===========================================
-             HEADING
-          =========================================== */
+
+          /*
+          ==================================================================
+          HEADING
+          ==================================================================
+          */
 
           if (
 
             block.type ===
+
             "heading"
 
           ) {
@@ -543,7 +907,11 @@ export default function ArticlePage() {
 
               >
 
-                {text}
+                {
+
+                  text
+
+                }
 
               </h2>
 
@@ -552,9 +920,12 @@ export default function ArticlePage() {
           }
 
 
-          /* ===========================================
-             PARAGRAPH
-          =========================================== */
+
+          /*
+          ==================================================================
+          PARAGRAPH
+          ==================================================================
+          */
 
           return (
 
@@ -564,7 +935,11 @@ export default function ArticlePage() {
 
             >
 
-              {text}
+              {
+
+                text
+
+              }
 
             </p>
 
@@ -578,14 +953,19 @@ export default function ArticlePage() {
     }
 
 
-    /* ===============================================
-       ARRAY CONTENT
-    =============================================== */
+
+    /*
+    ========================================================================
+    ARRAY CONTENT
+    ========================================================================
+    */
 
     if (
 
       Array.isArray(
+
         story?.content
+
       )
 
       &&
@@ -609,11 +989,16 @@ export default function ArticlePage() {
           const text =
 
             typeof item ===
-              "string"
 
-              ? item
+            "string"
 
-              : (
+              ?
+
+              item
+
+              :
+
+              (
 
                 item?.body
 
@@ -636,15 +1021,21 @@ export default function ArticlePage() {
               );
 
 
+
           if (
 
-            !String(text).trim()
+            !String(
+
+              text
+
+            ).trim()
 
           ) {
 
             return null;
 
           }
+
 
 
           return (
@@ -655,7 +1046,11 @@ export default function ArticlePage() {
 
             >
 
-              {text}
+              {
+
+                text
+
+              }
 
             </p>
 
@@ -669,45 +1064,69 @@ export default function ArticlePage() {
     }
 
 
-    /* ===============================================
-       STRING CONTENT FALLBACK
-    =============================================== */
+
+    /*
+    ========================================================================
+    STRING CONTENT FALLBACK
+    ========================================================================
+    */
 
     const stringContent =
 
       typeof story?.content ===
-        "string"
 
-        ? story.content
+      "string"
 
-        : (
+        ?
+
+        story.content
+
+        :
+
+        (
 
           typeof story?.body ===
-            "string"
 
-            ? story.body
+          "string"
 
-            : (
+            ?
+
+            story.body
+
+            :
+
+            (
 
               typeof story?.article ===
-                "string"
 
-                ? story.article
+              "string"
 
-                : (
+                ?
+
+                story.article
+
+                :
+
+                (
 
                   typeof story?.description ===
-                    "string"
 
-                    ? story.description
+                  "string"
 
-                    : ""
+                    ?
+
+                    story.description
+
+                    :
+
+                    ""
 
                 )
 
             )
 
         );
+
 
 
     if (
@@ -719,7 +1138,11 @@ export default function ArticlePage() {
 
       return stringContent
 
-        .split("\n")
+        .split(
+
+          "\n"
+
+        )
 
         .map(
 
@@ -745,11 +1168,15 @@ export default function ArticlePage() {
 
         .filter(
 
-          ({
+          (
 
-            paragraph,
+            {
 
-          }) =>
+              paragraph,
+
+            }
+
+          ) =>
 
             paragraph.trim()
 
@@ -757,13 +1184,17 @@ export default function ArticlePage() {
 
         .map(
 
-          ({
+          (
 
-            paragraph,
+            {
 
-            index,
+              paragraph,
 
-          }) => (
+              index,
+
+            }
+
+          ) => (
 
             <p
 
@@ -771,7 +1202,11 @@ export default function ArticlePage() {
 
             >
 
-              {paragraph}
+              {
+
+                paragraph
+
+              }
 
             </p>
 
@@ -782,9 +1217,12 @@ export default function ArticlePage() {
     }
 
 
-    /* ===============================================
-       NO CONTENT
-    =============================================== */
+
+    /*
+    ========================================================================
+    NO CONTENT
+    ========================================================================
+    */
 
     return (
 
@@ -830,9 +1268,12 @@ export default function ArticlePage() {
   }
 
 
-  /* =====================================================
-     LOADING
-  ===================================================== */
+
+  /*
+  |--------------------------------------------------------------------------
+  | Loading
+  |--------------------------------------------------------------------------
+  */
 
   if (loading) {
 
@@ -878,14 +1319,12 @@ export default function ArticlePage() {
   }
 
 
-  /* =====================================================
-     STORY NOT FOUND
 
-     This will also appear if:
-     - Article ID is invalid
-     - Article was deleted
-     - Article is not published
-  ===================================================== */
+  /*
+  |--------------------------------------------------------------------------
+  | Story Not Found
+  |--------------------------------------------------------------------------
+  */
 
   if (!story) {
 
@@ -986,9 +1425,12 @@ export default function ArticlePage() {
   }
 
 
-  /* =====================================================
-     ARTICLE PAGE
-  ===================================================== */
+
+  /*
+  |--------------------------------------------------------------------------
+  | Article Page
+  |--------------------------------------------------------------------------
+  */
 
   return (
 
@@ -1006,9 +1448,11 @@ export default function ArticlePage() {
       >
 
 
-        {/* =============================================
-            BACK BUTTON
-        ============================================== */}
+        {/*
+        ====================================================================
+        BACK BUTTON
+        ====================================================================
+        */}
 
         <Link
 
@@ -1032,9 +1476,12 @@ export default function ArticlePage() {
         </Link>
 
 
-        {/* =============================================
-            ARTICLE
-        ============================================== */}
+
+        {/*
+        ====================================================================
+        ARTICLE
+        ====================================================================
+        */}
 
         <article
 
@@ -1043,9 +1490,11 @@ export default function ArticlePage() {
         >
 
 
-          {/* =========================================
-              ARTICLE HEADER
-          ========================================== */}
+          {/*
+          ==================================================================
+          ARTICLE HEADER
+          ==================================================================
+          */}
 
           <header
 
@@ -1054,9 +1503,11 @@ export default function ArticlePage() {
           >
 
 
-            {/* =======================================
-                CATEGORY
-            ======================================== */}
+            {/*
+            ================================================================
+            CATEGORY
+            ================================================================
+            */}
 
             <div
 
@@ -1069,9 +1520,13 @@ export default function ArticlePage() {
 
                 to={
 
-                  `/category/${createCategorySlug(
-                    story.category
-                  )
+                  `/category/${
+
+                    createCategorySlug(
+
+                      story.category
+
+                    )
 
                   }`
 
@@ -1092,6 +1547,7 @@ export default function ArticlePage() {
                 }
 
               </Link>
+
 
 
               {
@@ -1124,9 +1580,12 @@ export default function ArticlePage() {
             </div>
 
 
-            {/* =======================================
-                TITLE
-            ======================================== */}
+
+            {/*
+            ================================================================
+            TITLE
+            ================================================================
+            */}
 
             <h1>
 
@@ -1143,9 +1602,12 @@ export default function ArticlePage() {
             </h1>
 
 
-            {/* =======================================
-                SUMMARY
-            ======================================== */}
+
+            {/*
+            ================================================================
+            SUMMARY
+            ================================================================
+            */}
 
             {
 
@@ -1174,9 +1636,12 @@ export default function ArticlePage() {
             }
 
 
-            {/* =======================================
-                AUTHOR + ARTICLE INFO
-            ======================================== */}
+
+            {/*
+            ================================================================
+            AUTHOR + ARTICLE INFORMATION
+            ================================================================
+            */}
 
             <div
 
@@ -1185,7 +1650,11 @@ export default function ArticlePage() {
             >
 
 
-              {/* AUTHOR */}
+              {/*
+              ==============================================================
+              AUTHOR
+              ==============================================================
+              */}
 
               <div
 
@@ -1260,7 +1729,12 @@ export default function ArticlePage() {
               </div>
 
 
-              {/* ARTICLE INFORMATION */}
+
+              {/*
+              ==============================================================
+              ARTICLE INFORMATION
+              ==============================================================
+              */}
 
               <div
 
@@ -1269,7 +1743,11 @@ export default function ArticlePage() {
               >
 
 
-                {/* DATE */}
+                {/*
+                ============================================================
+                DATE
+                ============================================================
+                */}
 
                 <span>
 
@@ -1284,7 +1762,9 @@ export default function ArticlePage() {
                   {
 
                     formatArticleDate(
+
                       publishedDate
+
                     )
 
                   }
@@ -1293,12 +1773,19 @@ export default function ArticlePage() {
                 </span>
 
 
-                {/* TIME */}
+
+                {/*
+                ============================================================
+                TIME
+                ============================================================
+                */}
 
                 {
 
                   formatArticleTime(
+
                     publishedDate
+
                   )
 
                   &&
@@ -1314,7 +1801,9 @@ export default function ArticlePage() {
                       {
 
                         formatArticleTime(
+
                           publishedDate
+
                         )
 
                       }
@@ -1326,7 +1815,12 @@ export default function ArticlePage() {
                 }
 
 
-                {/* VIEWS */}
+
+                {/*
+                ============================================================
+                VIEWS
+                ============================================================
+                */}
 
                 <span>
 
@@ -1341,10 +1835,13 @@ export default function ArticlePage() {
                   {
 
                     formatViews(
-                      story.views
+
+                      displayedViews
+
                     )
 
                   }
+
 
                   {" "}
 
@@ -1354,7 +1851,12 @@ export default function ArticlePage() {
                 </span>
 
 
-                {/* READ TIME */}
+
+                {/*
+                ============================================================
+                READ TIME
+                ============================================================
+                */}
 
                 <span>
 
@@ -1384,9 +1886,12 @@ export default function ArticlePage() {
           </header>
 
 
-          {/* =========================================
-              FEATURED IMAGE
-          ========================================== */}
+
+          {/*
+          ==================================================================
+          FEATURED IMAGE
+          ==================================================================
+          */}
 
           {
 
@@ -1450,9 +1955,12 @@ export default function ArticlePage() {
           }
 
 
-          {/* =========================================
-              ARTICLE ACTIONS
-          ========================================== */}
+
+          {/*
+          ==================================================================
+          ARTICLE ACTIONS
+          ==================================================================
+          */}
 
           <div
 
@@ -1471,9 +1979,12 @@ export default function ArticlePage() {
           </div>
 
 
-          {/* =========================================
-              ARTICLE CONTENT
-          ========================================== */}
+
+          {/*
+          ==================================================================
+          ARTICLE CONTENT
+          ==================================================================
+          */}
 
           <section
 
@@ -1490,6 +2001,7 @@ export default function ArticlePage() {
           </section>
 
 
+
           <div
 
             className="pa-bottom-divider"
@@ -1497,9 +2009,12 @@ export default function ArticlePage() {
           />
 
 
-          {/* =========================================
-              ARTICLE FOOTER
-          ========================================== */}
+
+          {/*
+          ==================================================================
+          ARTICLE FOOTER
+          ==================================================================
+          */}
 
           <div
 
@@ -1545,9 +2060,12 @@ export default function ArticlePage() {
         </article>
 
 
-        {/* =============================================
-            RELATED NEWS
-        ============================================== */}
+
+        {/*
+        ====================================================================
+        RELATED NEWS
+        ====================================================================
+        */}
 
         <RelatedNews
 
@@ -1560,9 +2078,12 @@ export default function ArticlePage() {
         />
 
 
-        {/* =============================================
-            COMMENTS
-        ============================================== */}
+
+        {/*
+        ====================================================================
+        COMMENTS
+        ====================================================================
+        */}
 
         <section
 

@@ -11,7 +11,10 @@ import {
   TrendingUp,
 } from "lucide-react";
 
-import { Link } from "react-router-dom";
+import {
+  Link,
+  useNavigate,
+} from "react-router-dom";
 
 import { useApp } from "../../context/AppContext";
 
@@ -168,71 +171,329 @@ function EmptyNewsState() {
    NEWS CARD
 ========================================================= */
 
-function NewsCard({ story, variant = "grid" }) {
-  if (!story) return null;
+function NewsCard({
+  story,
+  variant = "grid",
+}) {
 
-  const image = getStoryImage(story);
+  const navigate = useNavigate();
+
+
+  if (!story) {
+
+    return null;
+
+  }
+
+
+  const image =
+    getStoryImage(story);
+
+
+  function openNews() {
+
+    navigate(
+      `/news/${story.id}`
+    );
+
+  }
+
+
+  function handleKeyDown(event) {
+
+    if (
+
+      event.key === "Enter"
+
+      ||
+
+      event.key === " "
+
+    ) {
+
+      event.preventDefault();
+
+      openNews();
+
+    }
+
+  }
+
 
   return (
-    <article className={`ph-news-card ph-news-card-${variant}`}>
-      <Link
-        to={`/news/${story.id}`}
+
+    <article
+
+      className={
+
+        `ph-news-card ph-news-card-${variant}`
+
+      }
+
+      onClick={openNews}
+
+      onKeyDown={handleKeyDown}
+
+      role="link"
+
+      tabIndex={0}
+
+      style={{
+
+        cursor: "pointer",
+
+      }}
+
+    >
+
+
+      {/* ===============================
+          IMAGE
+      =============================== */}
+
+      <div
+
         className="ph-card-image-link"
-        aria-label={story.title || "Open news story"}
+
       >
-        <div className="ph-card-image">
-          <NewsImage story={story} className="ph-card-image-file" />
 
-          {image && <ImageFallback />}
+        <div
 
-          {story.breaking && (
-            <span className="ph-breaking-badge">
+          className="ph-card-image"
+
+        >
+
+          <NewsImage
+
+            story={story}
+
+            className="ph-card-image-file"
+
+          />
+
+
+          {
+
+            image
+
+            &&
+
+            <ImageFallback />
+
+          }
+
+
+          {
+
+            story.breaking
+
+            &&
+
+            <span
+
+              className="ph-breaking-badge"
+
+            >
+
               <Flame size={13} />
-              Breaking
-            </span>
-          )}
-        </div>
-      </Link>
 
-      <div className="ph-card-body">
-        <div className="ph-card-meta">
+              Breaking
+
+            </span>
+
+          }
+
+        </div>
+
+      </div>
+
+
+      {/* ===============================
+          CONTENT
+      =============================== */}
+
+      <div
+
+        className="ph-card-body"
+
+      >
+
+
+        <div
+
+          className="ph-card-meta"
+
+        >
+
+
           <Link
-            to={`/category/${getCategorySlug(story.category)}`}
+
+            to={
+
+              `/category/${getCategorySlug(
+
+                story.category
+
+              )
+
+              }`
+
+            }
+
             className="ph-category-label"
+
+            onClick={
+
+              (
+
+                event
+
+              ) =>
+
+                event.stopPropagation()
+
+            }
+
           >
-            {story.category || "News"}
+
+            {
+
+              story.category
+
+              ||
+
+              "News"
+
+            }
+
           </Link>
 
-          <span>{getStoryDateLabel(story)}</span>
+
+          <span>
+
+            {
+
+              getStoryDateLabel(
+
+                story
+
+              )
+
+            }
+
+          </span>
+
         </div>
+
 
         <h3>
-          <Link to={`/news/${story.id}`}>
-            {story.title || "Untitled News Story"}
-          </Link>
+
+          {
+
+            story.title
+
+            ||
+
+            "Untitled News Story"
+
+          }
+
         </h3>
 
-        {story.summary && (
-          <p className="ph-card-summary">
-            {story.summary}
-          </p>
-        )}
 
-        <div className="ph-card-footer">
-          <span className="ph-card-author">
-            {story.author ||
-              story.authorName ||
-              "NewsRoom Editorial"}
+        {
+
+          story.summary
+
+          &&
+
+          (
+
+            <p
+
+              className="ph-card-summary"
+
+            >
+
+              {
+
+                story.summary
+
+              }
+
+            </p>
+
+          )
+
+        }
+
+
+        <div
+
+          className="ph-card-footer"
+
+        >
+
+
+          <span
+
+            className="ph-card-author"
+
+          >
+
+            {
+
+              story.author
+
+              ||
+
+              story.authorName
+
+              ||
+
+              "NewsRoom Editorial"
+
+            }
+
           </span>
 
-          <span className="ph-card-views">
+
+          <span
+
+            className="ph-card-views"
+
+          >
+
             <Eye size={14} />
-            {formatViews(Number(story.views) || 0)}
+
+            {
+
+              formatViews(
+
+                Number(
+
+                  story.views
+
+                )
+
+                ||
+
+                0
+
+              )
+
+            }
+
           </span>
+
         </div>
+
       </div>
+
     </article>
+
   );
+
 }
 
 
@@ -241,11 +502,40 @@ function NewsCard({ story, variant = "grid" }) {
 ========================================================= */
 
 export default function HomePage() {
+
+  const navigate = useNavigate();
+
   const {
     news = [],
     categories = [],
     loading = false,
   } = useApp();
+
+
+
+  function openHeroNews() {
+
+    if (!hero?.id) return;
+
+    navigate(`/news/${hero.id}`);
+
+  }
+
+
+  function handleHeroKeyDown(event) {
+
+    if (
+      event.key === "Enter" ||
+      event.key === " "
+    ) {
+
+      event.preventDefault();
+
+      openHeroNews();
+
+    }
+
+  }
 
 
   /* =======================================================
@@ -254,14 +544,14 @@ export default function HomePage() {
 
   const publishedNews = Array.isArray(news)
     ? news.filter((item) => {
-        if (!item) return false;
+      if (!item) return false;
 
-        const status = String(
-          item.status || ""
-        ).toUpperCase();
+      const status = String(
+        item.status || ""
+      ).toUpperCase();
 
-        return !status || status === "PUBLISHED";
-      })
+      return !status || status === "PUBLISHED";
+    })
     : [];
 
 
@@ -280,6 +570,31 @@ export default function HomePage() {
 
   const hero = sortedNews[0] || null;
   const sideStories = sortedNews.slice(1, 3);
+
+
+  function openHeroNews() {
+
+    if (!hero?.id) return;
+
+    navigate(`/news/${hero.id}`);
+
+  }
+
+
+  function handleHeroKeyDown(event) {
+
+    if (
+      event.key === "Enter" ||
+      event.key === " "
+    ) {
+
+      event.preventDefault();
+
+      openHeroNews();
+
+    }
+
+  }
 
   const latestStories = sortedNews.slice(3, 9);
 
@@ -399,65 +714,237 @@ export default function HomePage() {
 
         <div className="ph-hero-grid">
           {hero && (
-            <article className="ph-main-hero">
-              <Link
-                to={`/news/${hero.id}`}
-                className="ph-main-hero-image"
-              >
+
+            <article
+
+              className="ph-main-hero"
+
+              onClick={openHeroNews}
+
+              onKeyDown={handleHeroKeyDown}
+
+              role="link"
+
+              tabIndex={0}
+
+            >
+
+              {/* =====================================
+        HERO IMAGE
+    ====================================== */}
+
+              <div className="ph-main-hero-image">
+
                 <NewsImage
+
                   story={hero}
+
                   className="ph-main-hero-image-file"
+
                   priority
+
                 />
 
-                {getStoryImage(hero) && <ImageFallback />}
+                {
 
-                <div className="ph-main-hero-shade" />
+                  getStoryImage(hero)
 
-                {hero.breaking && (
+                  &&
+
+                  <ImageFallback />
+
+                }
+
+              </div>
+
+
+              {/* =====================================
+        DARK OVERLAY
+    ====================================== */}
+
+              <div className="ph-main-hero-shade" />
+
+
+              {/* =====================================
+        BREAKING BADGE
+    ====================================== */}
+
+              {
+
+                hero.breaking
+
+                &&
+
+                (
+
                   <span className="ph-main-hero-breaking">
+
                     <Flame size={14} />
+
                     Breaking News
+
                   </span>
-                )}
-              </Link>
+
+                )
+
+              }
+
+
+              {/* =====================================
+        HERO CONTENT
+    ====================================== */}
 
               <div className="ph-main-hero-content">
+
+
+                {/* META */}
+
                 <div className="ph-main-hero-meta">
+
                   <Link
-                    to={`/category/${getCategorySlug(hero.category)}`}
+
+                    to={
+                      `/category/${getCategorySlug(
+                        hero.category
+                      )
+                      }`
+                    }
+
+                    onClick={
+                      (event) =>
+                        event.stopPropagation()
+                    }
+
                   >
-                    {hero.category || "News"}
+
+                    {
+
+                      hero.category
+
+                      ||
+
+                      "News"
+
+                    }
+
                   </Link>
+
 
                   <span>•</span>
-                  <span>{getStoryDateLabel(hero)}</span>
+
+
+                  <span>
+
+                    {
+
+                      getStoryDateLabel(
+                        hero
+                      )
+
+                    }
+
+                  </span>
+
                 </div>
+
+
+                {/* TITLE */}
 
                 <h1>
-                  <Link to={`/news/${hero.id}`}>
-                    {hero.title || "Untitled News Story"}
-                  </Link>
+
+                  {
+
+                    hero.title
+
+                    ||
+
+                    "Untitled News Story"
+
+                  }
+
                 </h1>
 
-                {hero.summary && (
-                  <p>{hero.summary}</p>
-                )}
+
+                {/* SUMMARY */}
+
+                {
+
+                  hero.summary
+
+                  &&
+
+                  (
+
+                    <p>
+
+                      {
+
+                        hero.summary
+
+                      }
+
+                    </p>
+
+                  )
+
+                }
+
+
+                {/* FOOTER */}
 
                 <div className="ph-main-hero-bottom">
-                  <span>
-                    {hero.author ||
-                      hero.authorName ||
-                      "NewsRoom Editorial"}
-                  </span>
+
 
                   <span>
-                    <Eye size={15} />
-                    {formatViews(Number(hero.views) || 0)}
+
+                    {
+
+                      hero.author
+
+                      ||
+
+                      hero.authorName
+
+                      ||
+
+                      "NewsRoom Editorial"
+
+                    }
+
                   </span>
+
+
+                  <span>
+
+                    <Eye size={15} />
+
+                    {
+
+                      formatViews(
+
+                        Number(
+                          hero.views
+                        )
+
+                        ||
+
+                        0
+
+                      )
+
+                    }
+
+                  </span>
+
+
                 </div>
+
+
               </div>
+
+
             </article>
+
           )}
 
           <div className="ph-hero-side">

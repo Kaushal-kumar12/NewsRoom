@@ -34,7 +34,9 @@
 }
 
 @keyframes phSpin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .ph-kicker,
@@ -79,7 +81,11 @@
   border: 1px solid #e3e8f0;
   border-radius: 28px;
   background:
-    radial-gradient(circle at top right, rgba(45, 94, 183, 0.13), transparent 34%),
+    radial-gradient(
+      circle at top right,
+      rgba(45, 94, 183, 0.13),
+      transparent 34%
+    ),
     linear-gradient(135deg, #f8fbff, #ffffff 55%, #f1f6ff);
 }
 
@@ -115,7 +121,9 @@
   color: #fff;
   font-size: 14px;
   font-weight: 700;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .ph-primary-button:hover {
@@ -199,19 +207,46 @@
 
 .ph-main-hero {
   position: relative;
+
   min-height: 560px;
+
   overflow: hidden;
+
   border-radius: 24px;
+
   background: #1b2638;
+
   box-shadow: 0 18px 48px rgba(25, 39, 66, 0.12);
+
+  cursor: pointer;
+
+  isolation: isolate;
 }
 
-.ph-main-hero-image,
+.ph-main-hero-image {
+  position: absolute;
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  display: block;
+
+  cursor: pointer;
+}
+
 .ph-main-hero-image-file {
   position: absolute;
   inset: 0;
+
   width: 100%;
   height: 100%;
+
+  object-fit: cover;
+
+  transition: transform 0.5s ease;
+
+  pointer-events: none;
 }
 
 .ph-main-hero-image-file {
@@ -227,7 +262,11 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: linear-gradient(180deg, rgba(10, 17, 28, 0.02) 25%, rgba(10, 17, 28, 0.88) 100%);
+  background: linear-gradient(
+    180deg,
+    rgba(10, 17, 28, 0.02) 25%,
+    rgba(10, 17, 28, 0.88) 100%
+  );
 }
 
 .ph-main-hero-breaking,
@@ -254,12 +293,20 @@
 
 .ph-main-hero-content {
   position: absolute;
+
   z-index: 3;
+
   right: 0;
+
   bottom: 0;
+
   left: 0;
+
   padding: clamp(26px, 4vw, 48px);
+
   color: #fff;
+
+  cursor: pointer;
 }
 
 .ph-main-hero-meta {
@@ -267,7 +314,7 @@
   align-items: center;
   flex-wrap: wrap;
   gap: 9px;
-  color: rgba(255,255,255,0.82);
+  color: rgba(255, 255, 255, 0.82);
   font-size: 12px;
   font-weight: 700;
 }
@@ -295,7 +342,7 @@
 .ph-main-hero p {
   max-width: 760px;
   margin: 0;
-  color: rgba(255,255,255,0.82);
+  color: rgba(255, 255, 255, 0.82);
   font-size: 16px;
   line-height: 1.7;
 }
@@ -307,8 +354,8 @@
   align-items: center;
   justify-content: space-between;
   gap: 15px;
-  border-top: 1px solid rgba(255,255,255,0.2);
-  color: rgba(255,255,255,0.84);
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.84);
   font-size: 13px;
 }
 
@@ -333,7 +380,10 @@
   border: 1px solid #e3e8f0;
   border-radius: 20px;
   background: #fff;
-  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+  transition:
+    transform 0.22s ease,
+    box-shadow 0.22s ease,
+    border-color 0.22s ease;
 }
 
 .ph-news-card:hover {
@@ -421,6 +471,7 @@
   line-height: 1.65;
   display: -webkit-box;
   -webkit-line-clamp: 3;
+  line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -465,7 +516,11 @@
   align-items: center;
   justify-content: center;
   background:
-    radial-gradient(circle at 20% 20%, rgba(51, 101, 193, 0.24), transparent 34%),
+    radial-gradient(
+      circle at 20% 20%,
+      rgba(51, 101, 193, 0.24),
+      transparent 34%
+    ),
     linear-gradient(135deg, #263449, #172033);
   color: #dbe8ff;
 }
@@ -509,7 +564,9 @@
   scrollbar-width: none;
 }
 
-.ph-category-pills::-webkit-scrollbar { display: none; }
+.ph-category-pills::-webkit-scrollbar {
+  display: none;
+}
 
 .ph-category-pill {
   display: inline-flex;
@@ -525,7 +582,10 @@
   white-space: nowrap;
   font-size: 13px;
   font-weight: 700;
-  transition: color 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+  transition:
+    color 0.2s ease,
+    background 0.2s ease,
+    border-color 0.2s ease;
 }
 
 .ph-category-pill:hover {
@@ -756,7 +816,9 @@
   border-bottom: 1px solid #edf0f4;
 }
 
-.ph-ranked-item:last-child { border-bottom: 0; }
+.ph-ranked-item:last-child {
+  border-bottom: 0;
+}
 
 .ph-rank-number {
   color: #d5dce7;
@@ -791,13 +853,19 @@
   font-size: 12px;
 }
 
-.ph-ranked-item:hover strong { color: #1f4fa3; }
+.ph-ranked-item:hover strong {
+  color: #1f4fa3;
+}
 
 .ph-newsletter-card {
   padding: clamp(28px, 4vw, 42px);
   color: #fff;
   background:
-    radial-gradient(circle at top right, rgba(87, 130, 218, 0.45), transparent 32%),
+    radial-gradient(
+      circle at top right,
+      rgba(87, 130, 218, 0.45),
+      transparent 32%
+    ),
     linear-gradient(145deg, #17396f, #172033 72%);
   box-shadow: 0 18px 42px rgba(20, 35, 57, 0.15);
 }
@@ -809,7 +877,7 @@
   display: grid;
   place-items: center;
   border-radius: 14px;
-  background: rgba(255,255,255,0.12);
+  background: rgba(255, 255, 255, 0.12);
 }
 
 .ph-newsletter-card .ph-kicker {
@@ -825,7 +893,7 @@
 
 .ph-newsletter-card p {
   margin: 0;
-  color: rgba(255,255,255,0.72);
+  color: rgba(255, 255, 255, 0.72);
   line-height: 1.65;
   font-size: 14px;
 }
@@ -841,7 +909,7 @@
   width: 100%;
   min-height: 48px;
   padding: 0 14px;
-  border: 1px solid rgba(255,255,255,0.16);
+  border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 10px;
   outline: none;
   color: #172033;
@@ -866,7 +934,7 @@
 .ph-newsletter-card > small {
   display: block;
   margin-top: 14px;
-  color: rgba(255,255,255,0.52);
+  color: rgba(255, 255, 255, 0.52);
   font-size: 11px;
   line-height: 1.5;
 }
@@ -875,7 +943,9 @@
    VISUAL STORIES
 ========================================================= */
 
-.ph-visual-section { margin-bottom: 0; }
+.ph-visual-section {
+  margin-bottom: 0;
+}
 
 .ph-visual-grid {
   display: grid;
@@ -921,7 +991,11 @@
 .ph-visual-shade {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(10,17,28,0.03), rgba(10,17,28,0.84));
+  background: linear-gradient(
+    180deg,
+    rgba(10, 17, 28, 0.03),
+    rgba(10, 17, 28, 0.84)
+  );
 }
 
 .ph-visual-content {
@@ -958,7 +1032,7 @@
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  color: rgba(255,255,255,0.75);
+  color: rgba(255, 255, 255, 0.75);
   font-size: 11px;
 }
 
@@ -1111,4 +1185,27 @@
     flex-direction: column;
     text-align: center;
   }
+}
+
+.ph-news-card {
+  position: relative;
+
+  z-index: 1;
+
+  cursor: pointer;
+}
+
+.ph-news-card-side {
+  position: relative;
+
+  z-index: 1;
+
+  cursor: pointer;
+}
+
+.ph-card-image,
+.ph-card-body {
+  position: relative;
+
+  z-index: 1;
 }

@@ -1336,6 +1336,109 @@ export async function sendNewsBackForRevision(
   return true;
 }
 
+
+/*
+|--------------------------------------------------------------------------
+| DIRECT PUBLISH (SUPER ADMIN)
+|--------------------------------------------------------------------------
+|
+| Used when a Super Admin creates or edits a story and intentionally
+| publishes it immediately without sending it through editorial review.
+|
+*/
+
+export async function publishNewsDirect(
+  newsId,
+  user
+) {
+  requireDb();
+
+  if (!canPublishNews(user)) {
+    throw new Error(
+      "Only Super Admin can publish news directly."
+    );
+  }
+
+  if (!newsId) {
+    throw new Error(
+      "News ID is required."
+    );
+  }
+
+  const existing =
+    await getNewsById(
+      newsId,
+      user
+    );
+
+  if (!existing) {
+    throw new Error(
+      "News article was not found."
+    );
+  }
+
+  if (
+    existing.status ===
+    "PUBLISHED"
+  ) {
+    throw new Error(
+      "This news article is already published."
+    );
+  }
+
+  const userId =
+    getUserId(user);
+
+  const role =
+    getUserRole(user);
+
+  await updateDoc(
+    doc(
+      db,
+      NEWS,
+      newsId
+    ),
+    {
+      status:
+        "PUBLISHED",
+
+      publishedBy:
+        userId,
+
+      publishedByName:
+        getUserName(user),
+
+      publishedByRole:
+        role,
+
+      publishedAt:
+        serverTimestamp(),
+
+      updatedByUid:
+        userId,
+
+      updatedByRole:
+        role,
+
+      updatedAt:
+        serverTimestamp(),
+    }
+  );
+
+  await safeAudit(
+    user,
+    "NEWS_DIRECTLY_PUBLISHED",
+    newsId,
+    {
+      previousStatus:
+        existing.status || "",
+    }
+  );
+
+  return true;
+}
+
+
 /*
 |--------------------------------------------------------------------------
 | PUBLISH
